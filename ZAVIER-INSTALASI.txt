@@ -1,0 +1,48 @@
+ZAVIER LEARNING CENTER - POLRI CERMAT
+====================================
+
+Versi ini mempertahankan sistem KECERMATAN yang sudah ada dan menambahkan sistem KEPRIBADIAN secara terpisah.
+
+Fitur baru:
+- Dashboard Super Admin ZAVIER baru.
+- Bank Soal Kepribadian.
+- Import soal langsung dari Word (.docx) dengan format nomor + A-E.
+- Input/edit kunci jawaban dan nilai.
+- Generate Paket Soal Kepribadian dari bank soal.
+- Murid dapat melihat paket Kepribadian.
+- Murid dapat mengerjakan ujian Kepribadian dengan timer.
+- Hasil ujian Kepribadian tersimpan dan dapat dilihat.
+- Sistem Kecermatan lama tidak diubah alurnya.
+
+CARA MENJALANKAN DI WINDOWS / LARAGON
+1. Ekstrak folder ZIP ke:
+   D:\laragon\www\zavier
+
+2. Buka CMD / Terminal pada folder tersebut.
+
+3. Karena vendor sudah disertakan, langsung jalankan:
+   php artisan optimize:clear
+   php artisan migrate
+   php artisan serve
+
+4. Buka:
+   http://127.0.0.1:8000
+
+Jika ingin memakai database baru, jangan jalankan migrate:fresh pada folder ini karena itu akan menghapus data yang sudah ada.
+
+FORMAT WORD UNTUK IMPORT
+1. Pertanyaan pertama
+A. Pilihan A
+B. Pilihan B
+C. Pilihan C
+D. Pilihan D
+E. Pilihan E
+
+2. Pertanyaan kedua
+A. Pilihan A
+B. Pilihan B
+C. Pilihan C
+D. Pilihan D
+E. Pilihan E
+
+Setelah import, buka setiap soal untuk mengisi Kunci Jawaban dan Nilai.
