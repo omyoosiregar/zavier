@@ -580,7 +580,7 @@
 
 
     {{-- =========================================================
-         2. TES PSIKOLOGI & PENALARAN
+         2. TES PSIKOLOGI
     ========================================================== --}}
 
     <div class="paket-section">
@@ -596,7 +596,7 @@
             <div class="section-title-wrap">
 
                 <h2>
-                    Tes Psikologi & Penalaran
+                    Tes Psikologi
                 </h2>
 
                 <p>
@@ -725,7 +725,37 @@
 
         </div>
 
+    </div>
 
+
+
+    {{-- =========================================================
+         3. TES AKADEMIK
+    ========================================================== --}}
+
+    <div class="paket-section">
+
+        <div class="section-heading">
+
+            <div class="section-icon akademik">
+
+                <i class="bi bi-mortarboard"></i>
+
+            </div>
+
+            <div class="section-title-wrap">
+
+                <h2>
+                    Tes Akademik
+                </h2>
+
+                <p>
+                    Kelompok tes wawasan dan kemampuan akademik
+                </p>
+
+            </div>
+
+        </div>
 
         {{-- =====================================================
              PENALARAN NUMERIK
@@ -783,40 +813,6 @@
             </div>
 
         </div>
-
-    </div>
-
-
-
-    {{-- =========================================================
-         3. TES AKADEMIK
-    ========================================================== --}}
-
-    <div class="paket-section">
-
-        <div class="section-heading">
-
-            <div class="section-icon akademik">
-
-                <i class="bi bi-mortarboard"></i>
-
-            </div>
-
-            <div class="section-title-wrap">
-
-                <h2>
-                    Tes Akademik
-                </h2>
-
-                <p>
-                    Kelompok tes wawasan dan kemampuan akademik
-                </p>
-
-            </div>
-
-        </div>
-
-
 
         {{-- =====================================================
              TWK

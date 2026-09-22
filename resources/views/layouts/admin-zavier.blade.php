@@ -13,42 +13,43 @@
         @yield('title', 'ZAVIER Admin')
     </title>
 
-
     {{-- BOOTSTRAP --}}
-
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
 
-
     {{-- BOOTSTRAP ICON --}}
-
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
         rel="stylesheet"
     >
 
-
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
 
         :root {
 
             --z-primary: #2563eb;
+            --z-primary-dark: #123b82;
+            --z-cyan: #06b6d4;
 
-            --z-primary-dark: #1d4ed8;
+            --z-bg: #f5f8fd;
 
-            --z-dark: #0f172a;
+            --z-text: #172554;
+            --z-muted: #7183a0;
 
-            --z-sidebar: #111827;
-
-            --z-bg: #f4f7fb;
+            --sidebar-width: 270px;
+            --sidebar-mini: 82px;
 
         }
 
 
-        * {
-            box-sizing: border-box;
+        html {
+            scroll-behavior: smooth;
         }
 
 
@@ -56,68 +57,78 @@
 
             margin: 0;
 
-            background: var(--z-bg);
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(37,99,235,.07),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 20%,
+                    rgba(6,182,212,.06),
+                    transparent 28%
+                ),
+                var(--z-bg);
 
-            color: #172033;
+            color: var(--z-text);
 
             font-family:
-                Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
                 "Segoe UI",
+                Arial,
                 sans-serif;
 
         }
 
 
-        /* =========================================================
-           ADMIN SHELL
-        ========================================================= */
-
-        .admin-shell {
-
-            min-height: 100vh;
-
-        }
-
-
-        /* =========================================================
+        /* =====================================================
            SIDEBAR
-        ========================================================= */
+        ===================================================== */
 
         .admin-sidebar {
 
             position: fixed;
 
-            inset: 0 auto 0 0;
+            left: 0;
+            top: 0;
+            bottom: 0;
 
-            width: 265px;
+            width: var(--sidebar-width);
 
             background:
                 linear-gradient(
                     180deg,
-                    #111827 0%,
-                    #172554 100%
+                    #0b1730 0%,
+                    #102b63 55%,
+                    #123b82 100%
                 );
 
-            color: #fff;
+            color: white;
 
-            padding: 24px 16px;
+            padding: 18px 14px;
 
+            z-index: 1050;
+
+            overflow-x: hidden;
             overflow-y: auto;
 
-            z-index: 1040;
+            transition:
+                width .28s ease,
+                transform .28s ease;
+
+            box-shadow:
+                8px 0 35px
+                rgba(15,23,42,.08);
 
         }
 
 
-        /* =========================================================
+        /* =====================================================
            BRAND
-        ========================================================= */
+        ===================================================== */
 
         .brand {
+
+            height: 72px;
 
             display: flex;
 
@@ -125,187 +136,395 @@
 
             gap: 12px;
 
-            color: #fff;
+            padding:
+                7px 10px;
+
+            margin-bottom: 20px;
 
             text-decoration: none;
 
-            padding: 4px 10px 24px;
+            color: white;
 
             border-bottom:
                 1px solid
                 rgba(255,255,255,.10);
 
-            margin-bottom: 18px;
-
         }
 
 
         .brand:hover {
+            color: white;
+        }
 
-            color: #fff;
+
+        .brand-logo {
+
+            width: 48px;
+            height: 48px;
+
+            flex-shrink: 0;
+
+            object-fit: contain;
+
+            border-radius: 13px;
+
+            background: white;
+
+            padding: 3px;
+
+            box-shadow:
+                0 8px 20px
+                rgba(0,0,0,.15);
 
         }
 
 
-        .brand-mark {
+        .brand-text {
 
-            width: 44px;
+            min-width: 0;
 
-            height: 44px;
-
-            display: grid;
-
-            place-items: center;
-
-            border-radius: 14px;
-
-            background:
-                rgba(255,255,255,.12);
-
-            font-size: 22px;
+            transition:
+                opacity .2s ease,
+                transform .2s ease;
 
         }
 
 
-        .brand strong {
+        .brand-name {
 
-            font-size: 20px;
+            font-size: 19px;
 
-            letter-spacing: .5px;
+            font-weight: 900;
+
+            letter-spacing: .7px;
+
+            line-height: 1;
 
         }
 
 
-        .brand small {
+        .brand-subtitle {
 
             display: block;
+
+            margin-top: 5px;
+
+            font-size: 9px;
+
+            font-weight: 700;
+
+            letter-spacing: 1.5px;
 
             color:
                 rgba(255,255,255,.55);
 
-            font-size: 11px;
-
-            margin-top: 2px;
-
-            letter-spacing: .8px;
-
         }
 
 
-        /* =========================================================
+        /* =====================================================
            NAV LABEL
-        ========================================================= */
+        ===================================================== */
 
         .nav-label {
 
+            padding:
+                14px 12px 7px;
+
             color:
-                rgba(255,255,255,.40);
+                rgba(255,255,255,.38);
 
-            font-size: 10px;
+            font-size: 9px;
 
-            font-weight: 800;
+            font-weight: 900;
 
-            letter-spacing: 1.4px;
+            letter-spacing: 1.7px;
 
             text-transform: uppercase;
 
-            padding: 12px 12px 8px;
+            white-space: nowrap;
 
         }
 
 
-        /* =========================================================
+        /* =====================================================
            NAVIGATION
-        ========================================================= */
+        ===================================================== */
+
+        .admin-nav {
+
+            margin-bottom: 5px;
+
+        }
+
 
         .admin-nav a {
+
+            position: relative;
 
             display: flex;
 
             align-items: center;
 
-            gap: 11px;
+            gap: 13px;
+
+            min-height: 48px;
+
+            padding:
+                11px 13px;
+
+            margin-bottom: 5px;
+
+            border-radius: 14px;
 
             color:
-                rgba(255,255,255,.78);
+                rgba(255,255,255,.72);
 
             text-decoration: none;
 
-            padding: 11px 12px;
-
-            border-radius: 11px;
-
-            margin-bottom: 4px;
-
-            transition: .18s ease;
-
             font-size: 14px;
+
+            font-weight: 600;
+
+            white-space: nowrap;
+
+            transition:
+                background .2s ease,
+                color .2s ease,
+                transform .2s ease;
 
         }
 
 
         .admin-nav a i {
 
-            width: 20px;
+            width: 23px;
 
-            min-width: 20px;
+            min-width: 23px;
 
             text-align: center;
 
-            font-size: 17px;
+            font-size: 18px;
 
         }
 
 
         .admin-nav a:hover {
 
-            background:
-                rgba(255,255,255,.11);
+            color: white;
 
-            color: #fff;
+            background:
+                rgba(255,255,255,.09);
+
+            transform:
+                translateX(2px);
 
         }
 
 
         .admin-nav a.active {
 
-            background:
-                rgba(255,255,255,.11);
+            color: white;
 
-            color: #fff;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(37,99,235,.65),
+                    rgba(6,182,212,.25)
+                );
 
             box-shadow:
-                inset 3px 0 0 #60a5fa;
+                0 8px 20px
+                rgba(0,0,0,.10);
 
         }
 
 
-        /* =========================================================
+        .admin-nav a.active::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+
+            width: 3px;
+
+            border-radius: 10px;
+
+            background: #60a5fa;
+
+        }
+
+
+        /* =====================================================
+           SIDEBAR FOOTER
+        ===================================================== */
+
+        .sidebar-footer {
+
+            margin-top: 25px;
+
+            padding-top: 15px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,.10);
+
+        }
+
+
+        .logout-button {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+
+            width: 100%;
+
+            border: 0;
+
+            background: transparent;
+
+            color:
+                rgba(255,255,255,.62);
+
+            padding:
+                11px 13px;
+
+            border-radius: 13px;
+
+            font-size: 14px;
+
+            transition: .2s ease;
+
+        }
+
+
+        .logout-button:hover {
+
+            background:
+                rgba(239,68,68,.12);
+
+            color: #fecaca;
+
+        }
+
+
+        .logout-button i {
+
+            width: 23px;
+
+            text-align: center;
+
+            font-size: 18px;
+
+        }
+
+
+        /* =====================================================
            MAIN
-        ========================================================= */
+        ===================================================== */
 
         .admin-main {
 
-            margin-left: 265px;
+            margin-left: var(--sidebar-width);
 
             min-height: 100vh;
+
+            transition:
+                margin-left .28s ease;
 
         }
 
 
-        /* =========================================================
+        /* =====================================================
+           COLLAPSED SIDEBAR
+        ===================================================== */
+
+        body.sidebar-collapsed .admin-sidebar {
+
+            width: var(--sidebar-mini);
+
+        }
+
+
+        body.sidebar-collapsed .admin-main {
+
+            margin-left: var(--sidebar-mini);
+
+        }
+
+
+        body.sidebar-collapsed .brand {
+
+            justify-content: center;
+
+            padding-left: 0;
+            padding-right: 0;
+
+        }
+
+
+        body.sidebar-collapsed .brand-text,
+        body.sidebar-collapsed .nav-label,
+        body.sidebar-collapsed .nav-text,
+        body.sidebar-collapsed .logout-text {
+
+            opacity: 0;
+
+            width: 0;
+
+            overflow: hidden;
+
+            transform: translateX(-10px);
+
+        }
+
+
+        body.sidebar-collapsed .admin-nav a {
+
+            justify-content: center;
+
+            padding-left: 0;
+            padding-right: 0;
+
+        }
+
+
+        body.sidebar-collapsed .admin-nav a i {
+
+            margin: 0;
+
+        }
+
+
+        body.sidebar-collapsed .logout-button {
+
+            justify-content: center;
+
+            padding-left: 0;
+            padding-right: 0;
+
+        }
+
+
+        /* =====================================================
            TOPBAR
-        ========================================================= */
+        ===================================================== */
 
         .admin-topbar {
 
-            height: 72px;
+            position: sticky;
 
-            background:
-                rgba(255,255,255,.94);
+            top: 0;
 
-            border-bottom:
-                1px solid #e5eaf1;
+            z-index: 1000;
+
+            height: 76px;
 
             display: flex;
 
@@ -313,33 +532,101 @@
 
             justify-content: space-between;
 
-            padding: 0 30px;
+            padding:
+                0 30px;
 
-            position: sticky;
+            background:
+                rgba(255,255,255,.93);
 
-            top: 0;
+            backdrop-filter:
+                blur(15px);
 
-            z-index: 1030;
+            border-bottom:
+                1px solid #e7edf5;
 
-            backdrop-filter: blur(10px);
+            box-shadow:
+                0 5px 25px
+                rgba(30,60,100,.04);
+
+        }
+
+
+        .top-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            min-width: 0;
+
+        }
+
+
+        .sidebar-toggle {
+
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 12px;
+
+            background: white;
+
+            color: #2563eb;
+
+            font-size: 20px;
+
+            transition: .2s ease;
+
+        }
+
+
+        .sidebar-toggle:hover {
+
+            background: #edf5ff;
+
+            transform:
+                translateY(-1px);
 
         }
 
 
         .top-title {
 
-            font-weight: 700;
+            font-size: 15px;
 
-            color: #172033;
+            font-weight: 900;
+
+            color: #172554;
 
         }
 
 
-        /* =========================================================
-           USER PILL
-        ========================================================= */
+        .top-subtitle {
 
-        .user-pill {
+            color: #94a3b8;
+
+            font-size: 11px;
+
+            margin-top: 2px;
+
+        }
+
+
+        /* =====================================================
+           PROFILE
+        ===================================================== */
+
+        .profile-area {
 
             display: flex;
 
@@ -347,68 +634,105 @@
 
             gap: 10px;
 
-            background:
-                #f1f5f9;
-
-            border:
-                1px solid #e2e8f0;
-
-            border-radius: 999px;
-
-            padding:
-                7px 13px 7px 8px;
-
         }
 
 
-        .user-avatar {
+        .profile-circle {
 
-            width: 34px;
+            width: 43px;
+            height: 43px;
 
-            height: 34px;
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
 
             border-radius: 50%;
 
-            display: grid;
+            color: white;
 
-            place-items: center;
+            font-weight: 900;
 
             background:
-                #dbeafe;
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #06b6d4
+                );
 
-            color:
-                #1d4ed8;
+            box-shadow:
+                0 7px 18px
+                rgba(37,99,235,.18);
+
+        }
+
+
+        .profile-name {
+
+            font-size: 13px;
 
             font-weight: 800;
 
+            color: #172554;
+
         }
 
 
-        /* =========================================================
+        .profile-role {
+
+            font-size: 10px;
+
+            color: #94a3b8;
+
+            margin-top: 2px;
+
+        }
+
+
+        /* =====================================================
            CONTENT
-        ========================================================= */
+        ===================================================== */
 
         .admin-content {
 
-            padding: 30px;
+            max-width: 1550px;
+
+            margin: auto;
+
+            padding:
+                30px;
 
         }
 
 
-        /* =========================================================
-           MOBILE BUTTON
-        ========================================================= */
+        /* =====================================================
+           MOBILE OVERLAY
+        ===================================================== */
 
-        .mobile-toggle {
+        .sidebar-overlay {
 
             display: none;
 
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(15,23,42,.45);
+
+            backdrop-filter:
+                blur(2px);
+
+            z-index: 1040;
+
         }
 
 
-        /* =========================================================
-           MOBILE
-        ========================================================= */
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
 
         @media (max-width: 991.98px) {
 
@@ -417,13 +741,12 @@
                 transform:
                     translateX(-100%);
 
-                transition:
-                    transform .2s ease;
+                width: 270px;
 
             }
 
 
-            .admin-sidebar.show {
+            .admin-sidebar.mobile-show {
 
                 transform:
                     translateX(0);
@@ -433,29 +756,72 @@
 
             .admin-main {
 
-                margin-left: 0;
+                margin-left: 0 !important;
 
             }
 
 
-            .mobile-toggle {
+            body.sidebar-collapsed .admin-sidebar {
 
-                display: inline-flex;
+                width: 270px;
 
-                width: 40px;
+            }
 
-                height: 40px;
 
-                align-items: center;
+            body.sidebar-collapsed .admin-sidebar .brand-text,
+            body.sidebar-collapsed .admin-sidebar .nav-label,
+            body.sidebar-collapsed .admin-sidebar .nav-text,
+            body.sidebar-collapsed .admin-sidebar .logout-text {
 
-                justify-content: center;
+                opacity: 1;
 
-                border:
-                    1px solid #e2e8f0;
+                width: auto;
 
-                background: #fff;
+                transform: none;
 
-                border-radius: 10px;
+            }
+
+
+            body.sidebar-collapsed .admin-sidebar .brand {
+
+                justify-content: flex-start;
+
+            }
+
+
+            body.sidebar-collapsed .admin-sidebar .admin-nav a {
+
+                justify-content: flex-start;
+
+                padding-left: 13px;
+                padding-right: 13px;
+
+            }
+
+
+            body.sidebar-collapsed .admin-sidebar .logout-button {
+
+                justify-content: flex-start;
+
+                padding-left: 13px;
+                padding-right: 13px;
+
+            }
+
+
+            .sidebar-overlay.show {
+
+                display: block;
+
+            }
+
+
+            .admin-topbar {
+
+                height: 70px;
+
+                padding:
+                    0 18px;
 
             }
 
@@ -463,16 +829,12 @@
             .admin-content {
 
                 padding:
-                    22px 16px;
+                    22px 18px 45px;
 
             }
 
         }
 
-
-        /* =========================================================
-           MOBILE KECIL
-        ========================================================= */
 
         @media (max-width: 575.98px) {
 
@@ -484,16 +846,74 @@
             }
 
 
-            .user-pill .user-name {
+            .top-subtitle {
 
                 display: none;
 
             }
 
+
+            .profile-name,
+            .profile-role {
+
+                display: none;
+
+            }
+
+
+            .profile-circle {
+
+                width: 39px;
+                height: 39px;
+
+            }
+
+
+            .admin-content {
+
+                padding:
+                    18px 14px 35px;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           GLOBAL DASHBOARD HELPERS
+        ===================================================== */
+
+        .dashboard-card {
+
+            border: 1px solid #e7edf6;
+
+            background: white;
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 10px 30px
+                rgba(30,60,100,.055);
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+
+        }
+
+
+        .dashboard-card:hover {
+
+            transform:
+                translateY(-3px);
+
+            box-shadow:
+                0 16px 38px
+                rgba(30,60,100,.09);
+
         }
 
     </style>
-
 
     @stack('styles')
 
@@ -506,9 +926,9 @@
 <div class="admin-shell">
 
 
-    {{-- =========================================================
-       SIDEBAR
-    ========================================================= --}}
+    {{-- =====================================================
+         SIDEBAR
+    ====================================================== --}}
 
     <aside
         class="admin-sidebar"
@@ -516,39 +936,37 @@
     >
 
 
-        {{-- BRAND --}}
+        {{-- LOGO ZAVIER --}}
 
         <a
             href="{{ route('admin.dashboard') }}"
             class="brand"
         >
 
-            <span class="brand-mark">
+            <img
+                src="{{ asset('images/zavier-logo.png') }}"
+                alt="ZAVIER"
+                class="brand-logo"
+            >
 
-                <i class="bi bi-stars"></i>
+            <span class="brand-text">
 
-            </span>
-
-
-            <span>
-
-                <strong>
+                <span class="brand-name">
                     ZAVIER
-                </strong>
+                </span>
 
-                <small>
+                <span class="brand-subtitle">
                     LEARNING CENTER
-                </small>
+                </span>
 
             </span>
 
         </a>
 
 
-
-        {{-- =====================================================
-           UTAMA
-        ====================================================== --}}
+        {{-- =================================================
+             UTAMA
+        ================================================== --}}
 
         <div class="nav-label">
             Utama
@@ -563,120 +981,60 @@
             <a
                 href="{{ route('admin.dashboard') }}"
                 class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                title="Dashboard"
             >
 
                 <i class="bi bi-grid-1x2-fill"></i>
 
-                <span>
+                <span class="nav-text">
                     Dashboard
                 </span>
 
             </a>
 
 
-
-            {{-- BANK SOAL UTAMA --}}
+            {{-- BANK SOAL --}}
 
             <a
                 href="{{ route('admin.bank-soal.index') }}"
                 class="{{ request()->routeIs('admin.bank-soal.*') ? 'active' : '' }}"
+                title="Bank Soal"
             >
 
                 <i class="bi bi-journal-text"></i>
 
-                <span>
+                <span class="nav-text">
                     Bank Soal
                 </span>
 
             </a>
 
 
-
-            {{-- =================================================
-               PAKET UJIAN UTAMA
-               
-               PENTING:
-               BUKAN paket-kepribadian.
-               Ini menuju halaman utama Paket Ujian.
-            ================================================== --}}
+            {{-- PAKET UJIAN --}}
 
             <a
                 href="{{ url('/admin/paket-ujian') }}"
                 class="{{ request()->is('admin/paket-ujian*') ? 'active' : '' }}"
+                title="Paket Ujian"
             >
 
-                <i class="bi bi-collection"></i>
+                <i class="bi bi-collection-fill"></i>
 
-                <span>
+                <span class="nav-text">
                     Paket Ujian
                 </span>
 
             </a>
 
-
         </nav>
 
 
-
-        {{-- =====================================================
-           KEPRIBADIAN
-        ====================================================== --}}
-
-        <div class="nav-label">
-
-            Kepribadian
-
-        </div>
-
-
-        <nav class="admin-nav">
-
-
-            {{-- BANK KEPRIBADIAN --}}
-
-            <a
-                href="{{ route('admin.kepribadian-bank.index') }}"
-                class="{{ request()->routeIs('admin.kepribadian-bank.*') ? 'active' : '' }}"
-            >
-
-                <i class="bi bi-person-vcard"></i>
-
-                <span>
-                    Bank Kepribadian
-                </span>
-
-            </a>
-
-
-
-            {{-- PAKET KEPRIBADIAN --}}
-
-            <a
-                href="{{ route('admin.paket-kepribadian.index') }}"
-                class="{{ request()->routeIs('admin.paket-kepribadian.*') ? 'active' : '' }}"
-            >
-
-                <i class="bi bi-ui-checks-grid"></i>
-
-                <span>
-                    Paket Kepribadian
-                </span>
-
-            </a>
-
-
-        </nav>
-
-
-
-        {{-- =====================================================
-           PESERTA
-        ====================================================== --}}
+        {{-- =================================================
+             PESERTA
+        ================================================== --}}
 
         <div class="nav-label">
-
             Peserta
-
         </div>
 
 
@@ -688,16 +1046,16 @@
             <a
                 href="{{ route('admin.mentor.index') }}"
                 class="{{ request()->routeIs('admin.mentor.*') ? 'active' : '' }}"
+                title="Mentor"
             >
 
                 <i class="bi bi-person-workspace"></i>
 
-                <span>
+                <span class="nav-text">
                     Mentor
                 </span>
 
             </a>
-
 
 
             {{-- MURID --}}
@@ -705,62 +1063,25 @@
             <a
                 href="{{ route('admin.murid') }}"
                 class="{{ request()->routeIs('admin.murid') ? 'active' : '' }}"
+                title="Murid"
             >
 
-                <i class="bi bi-people"></i>
+                <i class="bi bi-people-fill"></i>
 
-                <span>
+                <span class="nav-text">
                     Murid
                 </span>
 
             </a>
 
-
         </nav>
 
 
+        {{-- =================================================
+             LOGOUT
+        ================================================== --}}
 
-        {{-- =====================================================
-           SISTEM LAMA
-        ====================================================== --}}
-
-        <div class="nav-label">
-
-            Sistem Lama
-
-        </div>
-
-
-        <nav class="admin-nav">
-
-
-            {{-- KECERMATAN --}}
-
-            <a
-                href="{{ route('admin.paket-soal') }}"
-                class="{{ request()->routeIs('admin.paket-soal*') ? 'active' : '' }}"
-            >
-
-                <i class="bi bi-bullseye"></i>
-
-                <span>
-                    Kecermatan
-                </span>
-
-            </a>
-
-
-        </nav>
-
-
-
-        {{-- =====================================================
-           LOGOUT
-        ====================================================== --}}
-
-        <div
-            class="mt-4 pt-3 border-top border-light border-opacity-10"
-        >
+        <div class="sidebar-footer">
 
             <form
                 method="POST"
@@ -769,17 +1090,17 @@
 
                 @csrf
 
-
                 <button
                     type="submit"
-                    class="btn btn-link text-white-50 text-decoration-none w-100 text-start px-3"
+                    class="logout-button"
+                    title="Keluar"
                 >
 
-                    <i
-                        class="bi bi-box-arrow-right me-2"
-                    ></i>
+                    <i class="bi bi-box-arrow-right"></i>
 
-                    Keluar
+                    <span class="logout-text">
+                        Keluar
+                    </span>
 
                 </button>
 
@@ -791,43 +1112,48 @@
     </aside>
 
 
+    {{-- OVERLAY MOBILE --}}
 
-    {{-- =========================================================
-       MAIN AREA
-    ========================================================= --}}
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        onclick="closeMobileSidebar()"
+    ></div>
+
+
+    {{-- =====================================================
+         MAIN
+    ====================================================== --}}
 
     <div class="admin-main">
 
 
-        {{-- =====================================================
-           TOPBAR
-        ====================================================== --}}
+        {{-- =================================================
+             TOPBAR
+        ================================================== --}}
 
         <header class="admin-topbar">
 
 
-            <div
-                class="d-flex align-items-center gap-3"
-            >
+            <div class="top-left">
 
 
-                {{-- MOBILE TOGGLE --}}
+                {{-- TOGGLE SIDEBAR --}}
 
                 <button
-                    class="mobile-toggle"
                     type="button"
-                    onclick="document.getElementById('adminSidebar').classList.toggle('show')"
+                    class="sidebar-toggle"
+                    id="sidebarToggle"
+                    title="Buka / Tutup Menu"
                 >
 
                     <i
-                        class="bi bi-list fs-5"
+                        class="bi bi-layout-sidebar-inset"
+                        id="sidebarToggleIcon"
                     ></i>
 
                 </button>
 
-
-
-                {{-- TITLE --}}
 
                 <div>
 
@@ -840,30 +1166,42 @@
 
                     </div>
 
+                    <div class="top-subtitle">
 
-                    <div
-                        class="small text-secondary d-none d-sm-block"
-                    >
+                        Panel administrasi ZAVIER Learning Center
 
-                        Panel administrasi ZAVIER
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- =================================================
+                 PROFILE
+            ================================================== --}}
+
+            <div class="profile-area">
+
+
+                <div class="text-end d-none d-sm-block">
+
+                    <div class="profile-name">
+
+                        {{ Auth::user()->name ?? 'Admin' }}
+
+                    </div>
+
+                    <div class="profile-role">
+
+                        Super Admin
 
                     </div>
 
                 </div>
 
 
-            </div>
-
-
-
-            {{-- =================================================
-               USER
-            ================================================== --}}
-
-            <div class="user-pill">
-
-
-                <div class="user-avatar">
+                <div class="profile-circle">
 
                     {{ strtoupper(
                         substr(
@@ -875,38 +1213,15 @@
 
                 </div>
 
-
-                <div class="user-name">
-
-                    <div class="fw-semibold small">
-
-                        {{ Auth::user()->name ?? 'Admin' }}
-
-                    </div>
-
-
-                    <div
-                        class="text-secondary"
-                        style="font-size:10px"
-                    >
-
-                        Super Admin
-
-                    </div>
-
-                </div>
-
-
             </div>
 
 
         </header>
 
 
-
-        {{-- =====================================================
-           PAGE CONTENT
-        ====================================================== --}}
+        {{-- =================================================
+             CONTENT
+        ================================================== --}}
 
         <main class="admin-content">
 
@@ -917,18 +1232,165 @@
 
     </div>
 
-
 </div>
 
 
-
-{{-- =========================================================
-   BOOTSTRAP JS
-========================================================= --}}
+{{-- BOOTSTRAP JS --}}
 
 <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-></script>
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<script>
+
+    const sidebar =
+        document.getElementById('adminSidebar');
+
+    const sidebarToggle =
+        document.getElementById('sidebarToggle');
+
+    const sidebarToggleIcon =
+        document.getElementById('sidebarToggleIcon');
+
+    const sidebarOverlay =
+        document.getElementById('sidebarOverlay');
+
+
+    /* =====================================================
+       LOAD STATUS SIDEBAR
+    ===================================================== */
+
+    const sidebarState =
+        localStorage.getItem('zavier_admin_sidebar');
+
+
+    if (
+        sidebarState === 'collapsed'
+        &&
+        window.innerWidth > 991
+    ) {
+
+        document.body.classList.add(
+            'sidebar-collapsed'
+        );
+
+    }
+
+
+    /* =====================================================
+       TOGGLE
+    ===================================================== */
+
+    sidebarToggle.addEventListener(
+        'click',
+        function() {
+
+            if (window.innerWidth <= 991) {
+
+                sidebar.classList.toggle(
+                    'mobile-show'
+                );
+
+                sidebarOverlay.classList.toggle(
+                    'show'
+                );
+
+                return;
+
+            }
+
+
+            document.body.classList.toggle(
+                'sidebar-collapsed'
+            );
+
+
+            const collapsed =
+                document.body.classList.contains(
+                    'sidebar-collapsed'
+                );
+
+
+            localStorage.setItem(
+                'zavier_admin_sidebar',
+                collapsed
+                    ? 'collapsed'
+                    : 'open'
+            );
+
+
+            updateSidebarIcon();
+
+        }
+    );
+
+
+    /* =====================================================
+       ICON
+    ===================================================== */
+
+    function updateSidebarIcon() {
+
+        const collapsed =
+            document.body.classList.contains(
+                'sidebar-collapsed'
+            );
+
+
+        if (collapsed) {
+
+            sidebarToggleIcon.className =
+                'bi bi-layout-sidebar-inset';
+
+        } else {
+
+            sidebarToggleIcon.className =
+                'bi bi-layout-sidebar-inset-reverse';
+
+        }
+
+    }
+
+
+    updateSidebarIcon();
+
+
+    /* =====================================================
+       MOBILE CLOSE
+    ===================================================== */
+
+    function closeMobileSidebar() {
+
+        sidebar.classList.remove(
+            'mobile-show'
+        );
+
+        sidebarOverlay.classList.remove(
+            'show'
+        );
+
+    }
+
+
+    /* =====================================================
+       RESIZE
+    ===================================================== */
+
+    window.addEventListener(
+        'resize',
+        function() {
+
+            if (window.innerWidth > 991) {
+
+                closeMobileSidebar();
+
+            }
+
+        }
+    );
+
+</script>
 
 
 @stack('scripts')

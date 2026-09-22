@@ -103,6 +103,7 @@
 
 
         .exam-title-area {
+
             min-width: 0;
         }
 
@@ -204,6 +205,7 @@
 
 
         .timer.warning {
+
             color: #ffe08a;
         }
 
@@ -386,7 +388,6 @@
             position: absolute;
 
             width: 220px;
-
             height: 220px;
 
             border-radius: 50%;
@@ -395,7 +396,6 @@
                 rgba(13,110,253,.035);
 
             right: -100px;
-
             top: -100px;
 
             pointer-events: none;
@@ -409,7 +409,6 @@
             position: absolute;
 
             width: 150px;
-
             height: 150px;
 
             border-radius: 50%;
@@ -418,7 +417,6 @@
                 rgba(13,202,240,.025);
 
             left: -80px;
-
             bottom: -80px;
 
             pointer-events: none;
@@ -482,6 +480,7 @@
 
 
         .question-number i {
+
             font-size: 14px;
         }
 
@@ -599,7 +598,6 @@
         .answer-letter {
 
             width: 40px;
-
             height: 40px;
 
             min-width: 40px;
@@ -655,7 +653,6 @@
         .answer-check {
 
             width: 25px;
-
             height: 25px;
 
             min-width: 25px;
@@ -743,6 +740,7 @@
 
 
         .answer-option input {
+
             display: none;
         }
 
@@ -786,7 +784,7 @@
 
 
         /* =====================================================
-           ANIMATION
+           ANIMATION SOAL
         ===================================================== */
 
         .question-changing {
@@ -813,6 +811,323 @@
                 transform:
                     translateY(0);
             }
+
+        }
+
+
+        /* =====================================================
+           MODAL SELESAI
+        ===================================================== */
+
+        .finish-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 99999;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(6, 24, 55, .72);
+
+            backdrop-filter:
+                blur(9px);
+
+            -webkit-backdrop-filter:
+                blur(9px);
+        }
+
+
+        .finish-overlay.show {
+
+            display: flex;
+
+            animation:
+                overlayIn .22s ease;
+        }
+
+
+        @keyframes overlayIn {
+
+            from {
+
+                opacity: 0;
+            }
+
+            to {
+
+                opacity: 1;
+            }
+
+        }
+
+
+        .finish-modal {
+
+            width: 100%;
+
+            max-width: 430px;
+
+            padding:
+                32px 30px 30px;
+
+            border-radius: 28px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ffffff,
+                    #f7fbff
+                );
+
+            text-align: center;
+
+            box-shadow:
+                0 35px 90px
+                rgba(4,25,60,.35);
+
+            border:
+                1px solid
+                rgba(255,255,255,.8);
+
+            transform:
+                scale(.90)
+                translateY(15px);
+
+            animation:
+                modalIn .30s
+                cubic-bezier(.2,.8,.2,1)
+                forwards;
+        }
+
+
+        @keyframes modalIn {
+
+            to {
+
+                transform:
+                    scale(1)
+                    translateY(0);
+            }
+
+        }
+
+
+        /* =====================================================
+           ICON MODAL
+        ===================================================== */
+
+        .finish-icon {
+
+            width: 82px;
+
+            height: 82px;
+
+            margin:
+                0 auto 19px;
+
+            border-radius: 26px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e8f2ff,
+                    #e8fbff
+                );
+
+            color: #1769e8;
+
+            font-size: 40px;
+
+            box-shadow:
+                0 14px 32px
+                rgba(23,105,232,.14);
+
+            position: relative;
+        }
+
+
+        .finish-icon::before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: -6px;
+
+            border-radius: 31px;
+
+            border:
+                1px solid
+                rgba(23,105,232,.10);
+        }
+
+
+        .finish-modal h3 {
+
+            margin:
+                0 0 9px;
+
+            color: #132e59;
+
+            font-size: 25px;
+
+            font-weight: 850;
+
+            letter-spacing:
+                -.4px;
+        }
+
+
+        .finish-modal p {
+
+            margin:
+                0 auto 23px;
+
+            max-width: 350px;
+
+            color: #7185a4;
+
+            font-size: 13px;
+
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           SUMMARY
+        ===================================================== */
+
+        .finish-summary {
+
+            display: flex;
+
+            justify-content: center;
+
+            margin-bottom: 23px;
+        }
+
+
+        .summary-item {
+
+            min-width: 155px;
+
+            padding:
+                12px 18px;
+
+            border-radius: 15px;
+
+            background:
+                #f2f7fd;
+
+            border:
+                1px solid
+                #e2ebf6;
+        }
+
+
+        .summary-item strong {
+
+            display: block;
+
+            color: #1765d9;
+
+            font-size: 20px;
+
+            font-weight: 850;
+        }
+
+
+        .summary-item span {
+
+            display: block;
+
+            margin-top: 2px;
+
+            color: #8a9ab1;
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+
+        /* =====================================================
+           TOMBOL AKHIRI
+        ===================================================== */
+
+        .finish-btn {
+
+            width: 100%;
+
+            min-height: 52px;
+
+            border: 0;
+
+            border-radius: 15px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1769e8,
+                    #087fca
+                );
+
+            font-size: 14px;
+
+            font-weight: 850;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 12px 27px
+                rgba(23,105,232,.24);
+
+            transition:
+                transform .18s ease,
+                box-shadow .18s ease;
+        }
+
+
+        .finish-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 16px 32px
+                rgba(23,105,232,.32);
+        }
+
+
+        .finish-btn:active {
+
+            transform:
+                translateY(0);
+        }
+
+
+        .finish-btn i {
+
+            margin-right: 6px;
+
+            font-size: 16px;
         }
 
 
@@ -874,6 +1189,7 @@
         @media (max-width: 767px) {
 
             .exam-header {
+
                 height: 82px;
             }
 
@@ -888,16 +1204,19 @@
 
 
             .exam-title {
+
                 font-size: 20px;
             }
 
 
             .exam-package {
+
                 font-size: 10px;
             }
 
 
             .exam-label {
+
                 font-size: 8px;
             }
 
@@ -914,11 +1233,13 @@
 
 
             .timer-label {
+
                 font-size: 8px;
             }
 
 
             .timer {
+
                 font-size: 18px;
             }
 
@@ -977,6 +1298,7 @@
 
 
             .answer-list {
+
                 gap: 6px;
             }
 
@@ -995,7 +1317,6 @@
             .answer-letter {
 
                 width: 34px;
-
                 height: 34px;
 
                 min-width: 34px;
@@ -1017,7 +1338,6 @@
             .answer-check {
 
                 width: 21px;
-
                 height: 21px;
 
                 min-width: 21px;
@@ -1033,6 +1353,67 @@
 
                 font-size: 8px;
             }
+
+
+            .finish-modal {
+
+                max-width: 370px;
+
+                padding:
+                    27px 20px 22px;
+
+                border-radius: 24px;
+            }
+
+
+            .finish-icon {
+
+                width: 67px;
+                height: 67px;
+
+                border-radius: 21px;
+
+                font-size: 32px;
+
+                margin-bottom: 16px;
+            }
+
+
+            .finish-modal h3 {
+
+                font-size: 21px;
+            }
+
+
+            .finish-modal p {
+
+                font-size: 12px;
+
+                margin-bottom: 20px;
+            }
+
+
+            .summary-item {
+
+                min-width: 135px;
+
+                padding:
+                    10px 15px;
+            }
+
+
+            .summary-item strong {
+
+                font-size: 17px;
+            }
+
+
+            .finish-btn {
+
+                min-height: 48px;
+
+                font-size: 13px;
+            }
         }
 
 
@@ -1043,6 +1424,7 @@
         @media (max-width: 430px) {
 
             .exam-title {
+
                 font-size: 17px;
             }
 
@@ -1057,6 +1439,7 @@
 
 
             .timer {
+
                 font-size: 16px;
             }
 
@@ -1086,7 +1469,6 @@
             .answer-letter {
 
                 width: 31px;
-
                 height: 31px;
 
                 min-width: 31px;
@@ -1094,6 +1476,7 @@
 
 
             .answer-text {
+
                 font-size: 10px;
             }
         }
@@ -1110,6 +1493,7 @@
         ) {
 
             .exam-header {
+
                 height: 90px;
             }
 
@@ -1122,6 +1506,7 @@
 
 
             .exam-title {
+
                 font-size: 24px;
             }
 
@@ -1153,6 +1538,7 @@
 
 
             .question-number {
+
                 margin-bottom: 9px;
             }
 
@@ -1170,6 +1556,7 @@
 
 
             .answer-list {
+
                 gap: 6px;
             }
 
@@ -1184,7 +1571,6 @@
             .answer-letter {
 
                 width: 36px;
-
                 height: 36px;
 
                 min-width: 36px;
@@ -1198,6 +1584,7 @@
                 padding:
                     6px 12px;
             }
+
         }
 
     </style>
@@ -1228,7 +1615,9 @@
 
 
             <h1 class="exam-title">
+
                 Ujian Kepribadian
+
             </h1>
 
 
@@ -1244,7 +1633,9 @@
         <div class="timer-box">
 
             <div class="timer-label">
+
                 Sisa Waktu
+
             </div>
 
 
@@ -1252,11 +1643,13 @@
                 class="timer"
                 id="timer"
             >
+
                 {{ sprintf(
                     '%02d:%02d',
                     floor($durasiMenit / 60),
                     $durasiMenit % 60
                 ) }}
+
             </div>
 
         </div>
@@ -1285,7 +1678,9 @@
             <div class="progress-top">
 
                 <span class="progress-label">
+
                     Progress pengerjaan
+
                 </span>
 
 
@@ -1293,7 +1688,9 @@
                     class="progress-number"
                     id="progressNumber"
                 >
+
                     1 / {{ $soal->count() }}
+
                 </span>
 
             </div>
@@ -1386,13 +1783,17 @@
 
 
             <h4>
+
                 Soal Ujian Tidak Ditemukan
+
             </h4>
 
 
             <p>
+
                 Belum terdapat soal Kepribadian yang aktif
                 untuk paket ini.
+
             </p>
 
         </div>
@@ -1402,6 +1803,83 @@
 
 
 </main>
+
+
+<!-- =========================================================
+     MODAL KONFIRMASI
+     HANYA ADA TOMBOL AKHIRI UJIAN
+========================================================= -->
+
+<div
+    class="finish-overlay"
+    id="finishOverlay"
+    aria-hidden="true"
+>
+
+    <div
+        class="finish-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="finishTitle"
+    >
+
+
+        <div class="finish-icon">
+
+            <i class="bi bi-check2-circle"></i>
+
+        </div>
+
+
+        <h3 id="finishTitle">
+
+            Akhiri Ujian?
+
+        </h3>
+
+
+        <p>
+
+            Anda telah menjawab seluruh soal.
+            Apakah Anda yakin ingin mengakhiri ujian ini?
+            Setelah ujian diakhiri, jawaban akan diproses.
+
+        </p>
+
+
+        <div class="finish-summary">
+
+            <div class="summary-item">
+
+                <strong id="summaryAnswered">
+                    0
+                </strong>
+
+                <span>
+                    Soal Terjawab
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="finish-btn"
+            id="btnAkhiri"
+        >
+
+            <i class="bi bi-check-lg"></i>
+
+            Akhiri Ujian
+
+        </button>
+
+
+    </div>
+
+</div>
 
 
 <script>
@@ -1420,7 +1898,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           DURASI DARI PAKET SOAL
+           DURASI
         ===================================================== */
 
         let durasiMenit =
@@ -1428,10 +1906,6 @@ document.addEventListener(
                 @json($durasiMenit)
             );
 
-
-        /*
-         * Pastikan durasi valid.
-         */
 
         if (
             !Number.isFinite(durasiMenit) ||
@@ -1444,12 +1918,26 @@ document.addEventListener(
 
 
         /* =====================================================
-           UBAH MENIT MENJADI DETIK
+           WAKTU SERVER
         ===================================================== */
 
-        const waktuMulaiServer = Number(@json($startedAt ?? now()->timestamp));
-        const batasServer = waktuMulaiServer + (durasiMenit * 60);
-        let waktuTersisa = Math.max(0, batasServer - Math.floor(Date.now() / 1000));
+        const waktuMulaiServer =
+            Number(
+                @json($startedAt ?? now()->timestamp)
+            );
+
+
+        const batasServer =
+            waktuMulaiServer +
+            (durasiMenit * 60);
+
+
+        let waktuTersisa =
+            Math.max(
+                0,
+                batasServer -
+                Math.floor(Date.now() / 1000)
+            );
 
 
         /* =====================================================
@@ -1504,6 +1992,24 @@ document.addEventListener(
             );
 
 
+        const finishOverlay =
+            document.getElementById(
+                'finishOverlay'
+            );
+
+
+        const btnAkhiri =
+            document.getElementById(
+                'btnAkhiri'
+            );
+
+
+        const summaryAnswered =
+            document.getElementById(
+                'summaryAnswered'
+            );
+
+
         /* =====================================================
            VALIDASI
         ===================================================== */
@@ -1547,7 +2053,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           FORMAT TIMER
+           FORMAT WAKTU
         ===================================================== */
 
         function formatWaktu(
@@ -1591,7 +2097,9 @@ document.addEventListener(
         function updateTimer() {
 
             if (!timerElement) {
+
                 return;
+
             }
 
 
@@ -1607,9 +2115,7 @@ document.addEventListener(
             );
 
 
-            /*
-             * 5 menit terakhir
-             */
+            /* 5 menit terakhir */
 
             if (
                 waktuTersisa <= 300 &&
@@ -1623,9 +2129,7 @@ document.addEventListener(
             }
 
 
-            /*
-             * 1 menit terakhir
-             */
+            /* 1 menit terakhir */
 
             if (
                 waktuTersisa <= 60 &&
@@ -1639,9 +2143,7 @@ document.addEventListener(
             }
 
 
-            /*
-             * Waktu habis
-             */
+            /* Waktu habis */
 
             if (
                 waktuTersisa <= 0
@@ -1652,6 +2154,7 @@ document.addEventListener(
                 timerElement.textContent =
                     '00:00';
 
+
                 selesaiOtomatis();
 
             }
@@ -1660,16 +2163,14 @@ document.addEventListener(
 
 
         /* =====================================================
-           TIMER
+           MULAI TIMER
         ===================================================== */
 
         function mulaiTimer() {
 
-            /*
-             * Hentikan timer lama jika ada.
-             */
-
-            if (timerInterval !== null) {
+            if (
+                timerInterval !== null
+            ) {
 
                 clearInterval(
                     timerInterval
@@ -1678,16 +2179,8 @@ document.addEventListener(
             }
 
 
-            /*
-             * Tampilkan waktu awal.
-             */
-
             updateTimer();
 
-
-            /*
-             * Jalankan timer setiap 1 detik.
-             */
 
             timerInterval =
                 setInterval(
@@ -1707,14 +2200,10 @@ document.addEventListener(
                         }
 
 
-                        if (
-                            sedangPindah
-                        ) {
-
-                            return;
-
-                        }
-
+                        /*
+                         * Timer tetap berjalan
+                         * meskipun modal sedang tampil.
+                         */
 
                         waktuTersisa--;
 
@@ -1732,7 +2221,6 @@ document.addEventListener(
 
                         }
 
-
                     },
                     1000
                 );
@@ -1741,7 +2229,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           PROGRESS
+           UPDATE PROGRESS
         ===================================================== */
 
         function updateProgress() {
@@ -1787,6 +2275,7 @@ document.addEventListener(
 
         function simpanJawabanKeForm() {
 
+
             Object.keys(
                 jawaban
             ).forEach(
@@ -1802,6 +2291,7 @@ document.addEventListener(
 
 
                     if (!input) {
+
 
                         input =
                             document.createElement(
@@ -1843,7 +2333,6 @@ document.addEventListener(
 
         /* =====================================================
            ACAK PILIHAN
-           Fisher-Yates Shuffle
         ===================================================== */
 
         function acakPilihan(
@@ -1862,6 +2351,7 @@ document.addEventListener(
 
                 i--
             ) {
+
 
                 const j =
                     Math.floor(
@@ -1893,6 +2383,7 @@ document.addEventListener(
 
         function tampilkanSoal() {
 
+
             const soal =
                 semuaSoal[
                     soalAktif
@@ -1900,7 +2391,9 @@ document.addEventListener(
 
 
             if (!soal) {
+
                 return;
+
             }
 
 
@@ -1908,9 +2401,7 @@ document.addEventListener(
                 false;
 
 
-            /* =================================================
-               ANIMASI
-            ================================================= */
+            /* Animasi */
 
             questionCard.classList.remove(
                 'question-changing'
@@ -1925,9 +2416,7 @@ document.addEventListener(
             );
 
 
-            /* =================================================
-               NOMOR SOAL
-            ================================================= */
+            /* Nomor */
 
             questionNumber.innerHTML =
                 '<i class="bi bi-file-earmark-text-fill"></i>' +
@@ -1935,25 +2424,21 @@ document.addEventListener(
                 (soalAktif + 1);
 
 
-            /* =================================================
-               PERTANYAAN
-            ================================================= */
+            /* Pertanyaan */
 
             questionText.textContent =
                 soal.pertanyaan || '';
 
 
-            /* =================================================
-               BERSIHKAN JAWABAN
-            ================================================= */
+            /* Bersihkan jawaban */
 
             answerList.innerHTML =
                 '';
 
 
             /* =================================================
-               PILIHAN ASLI
-            ================================================= */
+               PILIHAN
+            ================================================== */
 
             const pilihanAsli = [
 
@@ -1985,10 +2470,6 @@ document.addEventListener(
             ];
 
 
-            /* =================================================
-               FILTER PILIHAN KOSONG
-            ================================================= */
-
             const pilihanValid =
                 pilihanAsli.filter(
                     function (pilihan) {
@@ -2005,10 +2486,6 @@ document.addEventListener(
                 );
 
 
-            /* =================================================
-               ACAK POSISI
-            ================================================= */
-
             const pilihanAcak =
                 acakPilihan(
                     pilihanValid
@@ -2017,7 +2494,7 @@ document.addEventListener(
 
             /* =================================================
                BUAT PILIHAN
-            ================================================= */
+            ================================================== */
 
             pilihanAcak.forEach(
                 function (
@@ -2026,20 +2503,11 @@ document.addEventListener(
                 ) {
 
 
-                    /*
-                     * Huruf yang tampil:
-                     * A, B, C, D, E
-                     */
-
                     const hurufTampilan =
                         String.fromCharCode(
                             65 + index
                         );
 
-
-                    /* =================================================
-                       LABEL
-                    ================================================= */
 
                     const label =
                         document.createElement(
@@ -2050,10 +2518,6 @@ document.addEventListener(
                     label.className =
                         'answer-option';
 
-
-                    /* =================================================
-                       RADIO
-                    ================================================= */
 
                     const radio =
                         document.createElement(
@@ -2070,19 +2534,9 @@ document.addEventListener(
                         soal.id;
 
 
-                    /*
-                     * Penting:
-                     * value tetap menggunakan
-                     * kunci asli database.
-                     */
-
                     radio.value =
                         pilihan.key;
 
-
-                    /* =================================================
-                       LETTER TAMPILAN
-                    ================================================= */
 
                     const letter =
                         document.createElement(
@@ -2098,10 +2552,6 @@ document.addEventListener(
                         hurufTampilan;
 
 
-                    /* =================================================
-                       TEXT
-                    ================================================= */
-
                     const answerText =
                         document.createElement(
                             'span'
@@ -2115,10 +2565,6 @@ document.addEventListener(
                     answerText.textContent =
                         pilihan.text;
 
-
-                    /* =================================================
-                       CHECK
-                    ================================================= */
 
                     const check =
                         document.createElement(
@@ -2134,9 +2580,7 @@ document.addEventListener(
                         '<i class="bi bi-check-lg"></i>';
 
 
-                    /* =================================================
-                       SUSUN
-                    ================================================= */
+                    /* Susun */
 
                     label.appendChild(
                         radio
@@ -2160,7 +2604,7 @@ document.addEventListener(
 
                     /* =================================================
                        JAWABAN SEBELUMNYA
-                    ================================================= */
+                    ================================================== */
 
                     if (
                         jawaban[soal.id] ===
@@ -2180,7 +2624,7 @@ document.addEventListener(
 
                     /* =================================================
                        KLIK JAWABAN
-                    ================================================= */
+                    ================================================== */
 
                     label.addEventListener(
                         'click',
@@ -2202,17 +2646,8 @@ document.addEventListener(
 
 
                             /*
-                             * Simpan kunci asli.
-                             *
-                             * Contoh:
-                             *
-                             * Tampilan:
-                             * A = "Sangat Setuju"
-                             *
-                             * Tetapi pilihan asli:
-                             * C
-                             *
-                             * Yang disimpan tetap C.
+                             * Simpan key asli
+                             * dari database.
                              */
 
                             jawaban[soal.id] =
@@ -2228,20 +2663,27 @@ document.addEventListener(
                             );
 
 
-                            /* =================================================
-                               SIMPAN KE FORM
-                            ================================================= */
+                            /*
+                             * Simpan jawaban
+                             * ke form.
+                             */
 
                             simpanJawabanKeForm();
 
 
-                            /* =================================================
-                               LANJUT SOAL
-                            ================================================= */
+                            /*
+                             * Delay sedikit supaya
+                             * animasi pilihan terlihat.
+                             */
 
                             setTimeout(
                                 function () {
 
+
+                                    /*
+                                     * Jika masih ada soal:
+                                     * lanjut ke soal berikutnya.
+                                     */
 
                                     if (
                                         soalAktif <
@@ -2261,10 +2703,21 @@ document.addEventListener(
                                     } else {
 
 
-                                        selesaiUjian();
+                                        /*
+                                         * SOAL TERAKHIR
+                                         *
+                                         * Tidak submit langsung.
+                                         *
+                                         * Tampilkan konfirmasi.
+                                         */
+
+                                        sedangPindah =
+                                            false;
+
+
+                                        tampilkanKonfirmasiSelesai();
 
                                     }
-
 
                                 },
                                 280
@@ -2274,10 +2727,6 @@ document.addEventListener(
                     );
 
 
-                    /* =================================================
-                       MASUKKAN KE DOM
-                    ================================================= */
-
                     answerList.appendChild(
                         label
                     );
@@ -2286,20 +2735,17 @@ document.addEventListener(
             );
 
 
-            /* =================================================
-               UPDATE PROGRESS
-            ================================================= */
-
             updateProgress();
 
         }
 
 
         /* =====================================================
-           SELESAI UJIAN
+           TAMPILKAN MODAL KONFIRMASI
         ===================================================== */
 
-        function selesaiUjian() {
+        function tampilkanKonfirmasiSelesai() {
+
 
             if (
                 ujianSudahSelesai
@@ -2310,38 +2756,75 @@ document.addEventListener(
             }
 
 
+            /*
+             * Pastikan jawaban terakhir
+             * tersimpan.
+             */
+
             simpanJawabanKeForm();
 
 
-            ujianSudahSelesai =
-                true;
+            /*
+             * Hitung jumlah jawaban.
+             */
+
+            const jumlahTerjawab =
+                Object.keys(
+                    jawaban
+                ).length;
 
 
-            sedangPindah =
-                true;
+            if (summaryAnswered) {
 
-
-            if (
-                timerInterval !== null
-            ) {
-
-                clearInterval(
-                    timerInterval
-                );
+                summaryAnswered.textContent =
+                    jumlahTerjawab +
+                    ' / ' +
+                    semuaSoal.length;
 
             }
 
 
-            form.submit();
+            /*
+             * Tampilkan modal.
+             */
+
+            finishOverlay.classList.add(
+                'show'
+            );
+
+
+            finishOverlay.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+
+            /*
+             * Fokus tombol.
+             */
+
+            setTimeout(
+                function () {
+
+                    if (btnAkhiri) {
+
+                        btnAkhiri.focus();
+
+                    }
+
+                },
+                120
+            );
 
         }
 
 
         /* =====================================================
-           WAKTU HABIS
+           AKHIRI UJIAN
         ===================================================== */
 
-        function selesaiOtomatis() {
+        function selesaiUjian() {
+
 
             if (
                 ujianSudahSelesai
@@ -2352,6 +2835,13 @@ document.addEventListener(
             }
 
 
+            /*
+             * Simpan semua jawaban.
+             */
+
+            simpanJawabanKeForm();
+
+
             ujianSudahSelesai =
                 true;
 
@@ -2360,8 +2850,24 @@ document.addEventListener(
                 true;
 
 
-            simpanJawabanKeForm();
+            /*
+             * Tutup modal.
+             */
 
+            finishOverlay.classList.remove(
+                'show'
+            );
+
+
+            finishOverlay.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+
+            /*
+             * Matikan timer.
+             */
 
             if (
                 timerInterval !== null
@@ -2375,7 +2881,7 @@ document.addEventListener(
 
 
             /*
-             * Submit otomatis ketika waktu habis.
+             * Submit form.
              */
 
             form.submit();
@@ -2384,20 +2890,162 @@ document.addEventListener(
 
 
         /* =====================================================
-           MULAI UJIAN
+           WAKTU HABIS
+        ===================================================== */
+
+        function selesaiOtomatis() {
+
+
+            if (
+                ujianSudahSelesai
+            ) {
+
+                return;
+
+            }
+
+
+            ujianSudahSelesai =
+                true;
+
+
+            sedangPindah =
+                true;
+
+
+            /*
+             * Simpan jawaban terakhir.
+             */
+
+            simpanJawabanKeForm();
+
+
+            /*
+             * Tutup modal jika sedang tampil.
+             */
+
+            if (finishOverlay) {
+
+                finishOverlay.classList.remove(
+                    'show'
+                );
+
+            }
+
+
+            /*
+             * Hentikan timer.
+             */
+
+            if (
+                timerInterval !== null
+            ) {
+
+                clearInterval(
+                    timerInterval
+                );
+
+            }
+
+
+            /*
+             * Submit otomatis.
+             */
+
+            form.submit();
+
+        }
+
+
+        /* =====================================================
+           TOMBOL AKHIRI UJIAN
+        ===================================================== */
+
+        if (btnAkhiri) {
+
+            btnAkhiri.addEventListener(
+                'click',
+                function () {
+
+                    selesaiUjian();
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           MODAL TIDAK BISA DITUTUP DENGAN
+           KLIK LUAR / ESC
+        ===================================================== */
+
+        if (finishOverlay) {
+
+            finishOverlay.addEventListener(
+                'click',
+                function (event) {
+
+                    /*
+                     * Jangan lakukan apa-apa.
+                     *
+                     * Modal hanya bisa ditutup
+                     * dengan tombol Akhiri Ujian.
+                     */
+
+                    if (
+                        event.target ===
+                        finishOverlay
+                    ) {
+
+                        event.stopPropagation();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           ESC DIABAIKAN SAAT MODAL
+        ===================================================== */
+
+        document.addEventListener(
+            'keydown',
+            function (event) {
+
+                if (
+                    event.key === 'Escape' &&
+                    finishOverlay.classList.contains(
+                        'show'
+                    )
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           TAMPILKAN SOAL PERTAMA
         ===================================================== */
 
         tampilkanSoal();
 
 
-        /*
-         * Timer dimulai setelah soal berhasil
-         * ditampilkan.
-         */
+        /* =====================================================
+           MULAI TIMER
+        ===================================================== */
 
         mulaiTimer();
 
     }
+
 );
 
 </script>
