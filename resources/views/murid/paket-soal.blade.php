@@ -1376,16 +1376,8 @@
 
     /*
     |--------------------------------------------------------------------------
-    | GABUNGKAN PAKET SESUAI URUTAN
+    | GABUNGKAN PAKET
     |--------------------------------------------------------------------------
-    |
-    | URUTAN WAJIB:
-    |
-    | 1. KECERMATAN
-    | 2. KEPRIBADIAN
-    | 3. KECERDASAN
-    | 4. LAINNYA
-    |
     */
 
     $paketTerklasifikasi =
@@ -1414,9 +1406,6 @@
     |--------------------------------------------------------------------------
     | PAKET TERURUT
     |--------------------------------------------------------------------------
-    |
-    | INI YANG MEMASTIKAN CARD JUGA TAMPIL SESUAI URUTAN.
-    |
     */
 
     $paketsTerurut =
@@ -1499,9 +1488,7 @@
         <div class="category-tabs">
 
 
-            <!-- =================================================
-                 1. KECERMATAN
-            ================================================== -->
+            <!-- KECERMATAN -->
 
             <button
                 type="button"
@@ -1541,9 +1528,7 @@
             </button>
 
 
-            <!-- =================================================
-                 2. KEPRIBADIAN
-            ================================================== -->
+            <!-- KEPRIBADIAN -->
 
             <button
                 type="button"
@@ -1583,9 +1568,7 @@
             </button>
 
 
-            <!-- =================================================
-                 3. KECERDASAN
-            ================================================== -->
+            <!-- KECERDASAN -->
 
             <button
                 type="button"
@@ -1625,9 +1608,7 @@
             </button>
 
 
-            <!-- =================================================
-                 4. LAINNYA
-            ================================================== -->
+            <!-- LAINNYA -->
 
             <button
                 type="button"
@@ -1678,7 +1659,6 @@
 
     <div class="section-header">
 
-
         <div class="section-title">
 
             <div class="section-title-icon">
@@ -1714,7 +1694,6 @@
 
         <div class="d-flex align-items-center gap-3">
 
-
             <div class="package-total">
 
                 <i class="bi bi-collection-fill me-1"></i>
@@ -1742,7 +1721,6 @@
                 >
 
             </div>
-
 
         </div>
 
@@ -1862,48 +1840,46 @@
 
                     /*
                     |--------------------------------------------------------------------------
-                    | ROUTE MULAI UJIAN
+                    | ROUTE MULAI UJIAN (PERBAIKAN KECERDASAN)
                     |--------------------------------------------------------------------------
                     |
-                    | Jangan mengubah route Kecermatan.
+                    | KECERMATAN:
+                    | murid.ujian
                     |
-                    | Untuk Kepribadian tetap menggunakan:
+                    | KEPRIBADIAN:
                     | murid.kepribadian.mulai
                     |
-                    */
-
-                    $routeMulaiUjian =
-                        route(
-                            'murid.ujian',
-                            $paket->id
-                        );
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ROUTE KEPRIBADIAN
-                    |--------------------------------------------------------------------------
+                    | KECERDASAN:
+                    | murid.kecerdasan.mulai
+                    |
                     */
 
                     if ($kategori === 'kepribadian') {
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | ROUTE KEPRIBADIAN
-                        |--------------------------------------------------------------------------
-                        | Gunakan ID ASLI paket dari tabel paket_soals.
-                        | Jangan mengambil angka dari nama paket.
-                        |--------------------------------------------------------------------------
-                        */
+                        $routeMulaiUjian = route(
+                            'murid.kepribadian.mulai',
+                            [
+                                'paket' => $paket->getKey()
+                            ]
+                        );
 
-                        $routeMulaiUjian =
-                            route(
-                                'murid.kepribadian.mulai',
-                                [
-                                    'paket' =>
-                                        $paket->id
-                                ]
-                            );
+                    } elseif ($kategori === 'kecerdasan') {
+
+                        $routeMulaiUjian = route(
+                            'murid.kecerdasan.mulai',
+                            [
+                                'paket' => $paket->getKey()
+                            ]
+                        );
+
+                    } else {
+
+                        $routeMulaiUjian = route(
+                            'murid.ujian',
+                            [
+                                'paketSoal' => $paket->getKey()
+                            ]
+                        );
 
                     }
 
@@ -1941,7 +1917,6 @@
 
                         <div class="package-title-row">
 
-
                             <h3 class="package-title">
 
                                 {{ $paket->nama_paket }}
@@ -1958,7 +1933,6 @@
                                 </span>
 
                             @endif
-
 
                         </div>
 
@@ -2045,37 +2019,37 @@
 
                             <!-- JUMLAH SOAL -->
 
-<div class="info-item">
+                            <div class="info-item">
 
-    <i class="bi bi-list-ol"></i>
+                                <i class="bi bi-list-ol"></i>
 
-    <span>
+                                <span>
 
-        @if($kategori === 'kepribadian')
+                                    @if($kategori === 'kecermatan')
 
-            Jumlah soal:
+                                        <strong>
 
-            <strong>
+                                            {{ $paket->jumlah_soal ?? 0 }}
 
-                {{ $paket->jumlah_soal ?? 0 }}
+                                        </strong>
 
-            </strong>
+                                        soal per kolom
 
-        @else
+                                    @else
 
-            <strong>
+                                        Jumlah soal:
 
-                {{ $paket->jumlah_soal ?? 0 }}
+                                        <strong>
 
-            </strong>
+                                            {{ $paket->jumlah_soal ?? 0 }}
 
-            soal per kolom
+                                        </strong>
 
-        @endif
+                                    @endif
 
-    </span>
+                                </span>
 
-</div>
+                            </div>
 
 
                         </div>
@@ -2358,7 +2332,6 @@ document.addEventListener(
 
         function filterPackages() {
 
-
             const keyword =
                 (
                     searchInput
@@ -2374,7 +2347,6 @@ document.addEventListener(
 
             cards.forEach(
                 function (card) {
-
 
                     const category =
                         card.dataset.category
@@ -2466,15 +2438,10 @@ document.addEventListener(
         categoryButtons.forEach(
             function (button) {
 
-
                 button.addEventListener(
                     'click',
                     function () {
 
-
-                        /*
-                        | Hapus active dari semua tombol
-                        */
 
                         categoryButtons.forEach(
                             function (btn) {
@@ -2487,33 +2454,20 @@ document.addEventListener(
                         );
 
 
-                        /*
-                        | Aktifkan tombol yang dipilih
-                        */
-
                         this.classList.add(
                             'active'
                         );
 
 
-                        /*
-                        | Simpan kategori aktif
-                        */
-
                         activeCategory =
                             this.dataset.category;
 
-
-                        /*
-                        | Ubah judul + deskripsi
-                        */
 
                         if (
                             categoryInfo[
                                 activeCategory
                             ]
                         ) {
-
 
                             categoryTitle.textContent =
                                 categoryInfo[
@@ -2527,10 +2481,6 @@ document.addEventListener(
                                 ].description;
 
 
-                            /*
-                            | Ubah icon
-                            */
-
                             if (categoryTitleIcon) {
 
                                 categoryTitleIcon.className =
@@ -2543,10 +2493,6 @@ document.addEventListener(
 
                         }
 
-
-                        /*
-                        | Jalankan filter
-                        */
 
                         filterPackages();
 
@@ -2584,7 +2530,6 @@ document.addEventListener(
         */
 
         filterPackages();
-
 
     }
 );

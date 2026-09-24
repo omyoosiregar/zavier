@@ -24,9 +24,10 @@ class PaketSoal extends Model
         'status' => 'boolean',
     ];
 
+
     /*
     |--------------------------------------------------------------------------
-    | RELASI KOLOM UJIAN KECERMATAN
+    | RELASI KECERMATAN
     |--------------------------------------------------------------------------
     */
 
@@ -37,6 +38,7 @@ class PaketSoal extends Model
             'paket_soal_id'
         )->orderBy('nomor_kolom');
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -53,20 +55,28 @@ class PaketSoal extends Model
             'soal_kepribadian_id'
         )
         ->withPivot('nomor_urut')
-        ->orderBy('paket_kepribadian_soal.nomor_urut');
+        ->orderBy(
+            'paket_kepribadian_soal.nomor_urut'
+        );
     }
+
 
     /*
     |--------------------------------------------------------------------------
-    | SCOPE KECERMATAN
+    | RELASI PAKET KECERDASAN
     |--------------------------------------------------------------------------
+    |
+    | PaketSoal dan PaketKecerdasan menggunakan tabel berbeda.
+    | Hubungan dicari berdasarkan nama_paket.
+    |
     */
 
-    public function scopeKecermatan($query)
+    public function paketKecerdasan()
     {
-        return $query->where(
-            'jenis_tes',
-            'Kecermatan'
+        return $this->hasOne(
+            \App\Models\PaketKecerdasan::class,
+            'nama_paket',
+            'nama_paket'
         );
     }
 }

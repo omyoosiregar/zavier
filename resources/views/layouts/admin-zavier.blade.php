@@ -1074,6 +1074,23 @@
 
             </a>
 
+
+            {{-- RIWAYAT UJIAN --}}
+
+            <a
+                href="{{ route('admin.riwayat-kecerdasan.index') }}"
+                class="{{ request()->routeIs('admin.riwayat-kecerdasan.*') ? 'active' : '' }}"
+                title="Riwayat Ujian"
+            >
+
+                <i class="bi bi-clock-history"></i>
+
+                <span class="nav-text">
+                    Riwayat Ujian
+                </span>
+
+            </a>
+
         </nav>
 
 

@@ -1249,6 +1249,12 @@
 
         </div>
 
+        <a href="{{ route('admin.riwayat-kecerdasan.index') }}" 
+   class="nav-link d-flex align-items-center gap-3 px-3 py-2 text-white text-decoration-none rounded-3 mb-1 {{ request()->routeIs('admin.riwayat-kecerdasan.*') ? 'bg-primary' : 'opacity-75' }}">
+    <i class="bi bi-clock-history fs-5"></i>
+    <span>Riwayat Ujian</span>
+</a>
+
     </div>
 
 </section>

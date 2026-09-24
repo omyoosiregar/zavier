@@ -1,758 +1,218 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Data Murid - Polri Cermat</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f4f7fb;
-            color: #1f2937;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        /* HEADER */
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .title h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .title p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        /* BUTTON */
-
-        .btn {
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 13px;
-        }
-
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-
-        .btn-back {
-            background: white;
-            color: #374151;
-            border: 1px solid #e5e7eb;
-            margin-right: 8px;
-        }
-
-        .btn-back:hover {
-            background: #f8fafc;
-        }
-
-        /* CARD */
-
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
-            overflow: hidden;
-        }
-
-        /* TABLE */
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: #f8fafc;
-            padding: 16px;
-            text-align: left;
-            font-size: 13px;
-            color: #64748b;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        td {
-            padding: 16px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-        }
-
-        tr:hover {
-            background: #f8fafc;
-        }
-
-        .number {
-            width: 60px;
-            color: #64748b;
-        }
-
-        /* ROLE */
-
-        .badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: #dbeafe;
-            color: #2563eb;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* AKSI */
-
-        .action-buttons {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-edit {
-            background: #eff6ff;
-            color: #2563eb;
-            border: 1px solid #dbeafe;
-        }
-
-        .btn-edit:hover {
-            background: #2563eb;
-            color: white;
-        }
-
-        .btn-delete {
-            background: #fff1f2;
-            color: #dc2626;
-            border: 1px solid #fecdd3;
-        }
-
-        .btn-delete:hover {
-            background: #dc2626;
-            color: white;
-        }
-
-        /* EMPTY */
-
-        .empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: #94a3b8;
-        }
-
-        .empty h3 {
-            margin-bottom: 8px;
-            color: #64748b;
-        }
-
-        /* ALERT */
-
-        .alert {
-            padding: 14px 18px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .alert-success {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* MODAL TAMBAH */
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.55);
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            width: 420px;
-            max-width: 90%;
-            background: white;
-            border-radius: 18px;
-            padding: 28px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-        }
-
-        .modal-header {
-            margin-bottom: 22px;
-        }
-
-        .modal-header h2 {
-            margin-bottom: 5px;
-        }
-
-        .modal-header p {
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        /* FORM */
-
-        .form-group {
-            margin-bottom: 17px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 7px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #dbe1ea;
-            border-radius: 10px;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .form-group input:focus {
-            border-color: #2563eb;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 22px;
-        }
-
-        .btn-cancel {
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        .btn-cancel:hover {
-            background: #e2e8f0;
-        }
-
-        /* MOBILE */
-
-        @media (max-width: 700px) {
-
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .card {
-                overflow-x: auto;
-            }
-
-            table {
-                min-width: 850px;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-<div class="container">
-
-
-    {{-- ========================= --}}
-    {{-- HEADER --}}
-    {{-- ========================= --}}
-
-    <div class="header">
-
-        <div class="title">
-
-            <h1>
-                👨‍🎓 Data Murid
-            </h1>
-
-            <p>
-                Kelola data peserta latihan soal kecermatan POLRI
-            </p>
-
-        </div>
-
-
+@extends('layouts.admin-zavier')
+
+@section('title', 'Data Murid - Super Admin ZAVIER')
+
+@section('content')
+<style>
+    .card-murid {
+        background: #ffffff;
+        border: 1px solid #e7edf6;
+        border-radius: 20px;
+        box-shadow: 0 4px 16px rgba(19, 42, 74, 0.04);
+        padding: 24px 28px;
+    }
+
+    .badge-role {
+        background-color: #dbeafe;
+        color: #1d4ed8;
+        font-weight: 700;
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-action-edit {
+        background-color: #fff7ed;
+        color: #ea580c;
+        border: 1px solid #ffedd5;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 6px 14px;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .btn-action-edit:hover {
+        background-color: #ea580c;
+        color: #ffffff;
+    }
+
+    .btn-action-delete {
+        background-color: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fee2e2;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 6px 14px;
+        transition: .2s ease;
+    }
+
+    .btn-action-delete:hover {
+        background-color: #dc2626;
+        color: #ffffff;
+    }
+</style>
+
+<div class="container-fluid py-2">
+
+    <!-- Header Section -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
-
-            <a href="{{ route('admin.dashboard') }}"
-               class="btn btn-back">
-
-                ← Dashboard
-
-            </a>
-
-
-            <button
-                class="btn btn-primary"
-                onclick="openModal()">
-
-                + Tambah Murid
-
-            </button>
-
+            <h3 class="fw-bold text-dark mb-1">
+                👨‍🎓 Data Murid
+            </h3>
+            <p class="text-muted small mb-0">
+                Kelola data peserta latihan soal kecermatan POLRI & ujian ZAVIER
+            </p>
         </div>
-
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary rounded-pill px-3 fw-semibold">
+                &larr; Dashboard
+            </a>
+            <!-- TOMBOL TAMBAH MURID (SELALU MUNCUL & MEMICU MODAL) -->
+            <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambahMurid">
+                <i class="bi bi-plus-lg me-1"></i> Tambah Murid
+            </button>
+        </div>
     </div>
 
-
-    {{-- ========================= --}}
-    {{-- PESAN BERHASIL --}}
-    {{-- ========================= --}}
-
+    <!-- Alert Notifikasi -->
     @if(session('success'))
-
-        <div class="alert alert-success">
-
-            ✅ {{ session('success') }}
-
+        <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
         </div>
-
     @endif
-
-
-    {{-- ========================= --}}
-    {{-- PESAN ERROR --}}
-    {{-- ========================= --}}
-
-    @if(session('error'))
-
-        <div class="alert alert-error">
-
-            ❌ {{ session('error') }}
-
-        </div>
-
-    @endif
-
-
-    {{-- ========================= --}}
-    {{-- ERROR VALIDASI --}}
-    {{-- ========================= --}}
 
     @if($errors->any())
-
-        <div class="alert alert-error">
-
-            <strong>
-                Terjadi kesalahan:
-            </strong>
-
-            <ul style="margin-top: 8px; padding-left: 20px;">
-
+        <div class="alert alert-danger border-0 rounded-4 shadow-sm mb-4">
+            <div class="fw-bold small mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Terjadi kesalahan saat input data:</div>
+            <ul class="mb-0 small ps-3">
                 @foreach($errors->all() as $error)
-
-                    <li>
-                        {{ $error }}
-                    </li>
-
+                    <li>{{ $error }}</li>
                 @endforeach
-
             </ul>
-
         </div>
-
     @endif
 
-
-    {{-- ========================= --}}
-    {{-- TABEL MURID --}}
-    {{-- ========================= --}}
-
-    <div class="card">
-
-        @if($murids->count() > 0)
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th class="number">
-                            No
-                        </th>
-
-                        <th>
-                            Nama Murid
-                        </th>
-
-                        <th>
-                            Email
-                        </th>
-
-                        <th>
-                            Role
-                        </th>
-
-                        <th>
-                            Terdaftar
-                        </th>
-
-                        <th>
-                            Aksi
-                        </th>
-
+    <!-- Card Tabel Murid -->
+    <div class="card-murid">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="text-muted small">
+                    <tr class="border-bottom">
+                        <th style="width: 50px;">No</th>
+                        <th>Nama Murid</th>
+                        <th>Email</th>
+                        <th class="text-center">Role</th>
+                        <th>Terdaftar</th>
+                        <th class="text-center" style="width: 180px;">Aksi</th>
                     </tr>
-
                 </thead>
-
-
                 <tbody>
-
-                    @foreach($murids as $index => $murid)
-
+                    @forelse($murids ?? $users as $idx => $m)
                         <tr>
-
-                            {{-- NO --}}
-
-                            <td>
-                                {{ $index + 1 }}
+                            <td class="text-muted fw-bold">
+                                {{ method_exists($murids ?? $users, 'firstItem') ? ($murids ?? $users)->firstItem() + $idx : $idx + 1 }}
                             </td>
-
-
-                            {{-- NAMA --}}
-
                             <td>
-
-                                <strong>
-                                    {{ $murid->name }}
-                                </strong>
-
+                                <strong class="text-dark">{{ $m->name }}</strong>
                             </td>
-
-
-                            {{-- EMAIL --}}
-
-                            <td>
-
-                                {{ $murid->email }}
-
+                            <td class="text-muted">
+                                {{ $m->email }}
                             </td>
-
-
-                            {{-- ROLE --}}
-
-                            <td>
-
-                                <span class="badge">
-
-                                    MURID
-
+                            <td class="text-center">
+                                <span class="badge-role">
+                                    {{ strtoupper($m->role ?? 'MURID') }}
                                 </span>
-
                             </td>
-
-
-                            {{-- TANGGAL --}}
-
-                            <td>
-
-                                {{ $murid->created_at->format('d M Y') }}
-
+                            <td class="text-muted small">
+                                {{ $m->created_at ? $m->created_at->format('d M Y') : '-' }}
                             </td>
-
-
-                            {{-- AKSI --}}
-
-                            <td>
-
-                                <div class="action-buttons">
-
-
-                                    {{-- EDIT --}}
-
-                                    <a
-                                        href="{{ route('admin.murid.edit', $murid->id) }}"
-                                        class="btn btn-edit">
-
-                                        ✏️ Edit
-
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <!-- Tombol Edit -->
+                                    <a href="{{ route('admin.murid.edit', $m->id) }}" class="btn-action-edit">
+                                        <i class="bi bi-pencil-fill me-1"></i> Edit
                                     </a>
 
-
-                                    {{-- HAPUS --}}
-
-                                    <form
-                                        action="{{ route('admin.murid.destroy', $murid->id) }}"
-                                        method="POST"
-                                        style="display:inline;"
-
-                                        onsubmit="return confirm(
-                                            'Apakah Anda yakin ingin menghapus murid {{ $murid->name }}? Data yang sudah dihapus tidak dapat dikembalikan.'
-                                        );"
-                                    >
-
+                                    <!-- Tombol Hapus -->
+                                    <form action="{{ route('admin.murid.destroy', $m->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data murid ini?')">
                                         @csrf
-
                                         @method('DELETE')
-
-
-                                        <button
-                                            type="submit"
-                                            class="btn btn-delete">
-
-                                            🗑️ Hapus
-
+                                        <button type="submit" class="btn-action-delete">
+                                            <i class="bi bi-trash-fill me-1"></i> Hapus
                                         </button>
-
                                     </form>
-
                                 </div>
-
                             </td>
-
                         </tr>
-
-                    @endforeach
-
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-person-x fs-2 d-block mb-2"></i>
+                                Belum ada data murid yang terdaftar.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
-
             </table>
-
-        @else
-
-            <div class="empty">
-
-                <h3>
-                    Belum ada murid
-                </h3>
-
-                <p>
-                    Silakan tambahkan murid pertama.
-                </p>
-
-            </div>
-
-        @endif
-
-    </div>
-
-</div>
-
-
-
-{{-- ================================================= --}}
-{{-- MODAL TAMBAH MURID --}}
-{{-- ================================================= --}}
-
-<div
-    class="modal"
-    id="modalMurid"
->
-
-
-    <div class="modal-content">
-
-
-        <div class="modal-header">
-
-            <h2>
-                Tambah Murid
-            </h2>
-
-            <p>
-                Masukkan data akun murid baru.
-            </p>
-
         </div>
 
-
-        <form
-            action="{{ route('admin.murid.store') }}"
-            method="POST"
-        >
-
-            @csrf
-
-
-            {{-- NAMA --}}
-
-            <div class="form-group">
-
-                <label>
-                    Nama Murid
-                </label>
-
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Contoh: Ahmad Fauzan"
-                    required
-                >
-
+        @if(isset($murids) && method_exists($murids, 'links'))
+            <div class="mt-4">
+                {{ $murids->links() }}
             </div>
-
-
-            {{-- EMAIL --}}
-
-            <div class="form-group">
-
-                <label>
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="murid@email.com"
-                    required
-                >
-
+        @elseif(isset($users) && method_exists($users, 'links'))
+            <div class="mt-4">
+                {{ $users->links() }}
             </div>
-
-
-            {{-- PASSWORD --}}
-
-            <div class="form-group">
-
-                <label>
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Minimal 6 karakter"
-                    required
-                >
-
-            </div>
-
-
-            {{-- BUTTON --}}
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="btn btn-cancel"
-                    onclick="closeModal()"
-                >
-
-                    Batal
-
-                </button>
-
-
-                <button
-                    type="submit"
-                    class="btn btn-primary"
-                >
-
-                    Simpan Murid
-
-                </button>
-
-            </div>
-
-        </form>
-
+        @endif
     </div>
 
 </div>
 
+<!-- MODAL TAMBAH MURID -->
+<div class="modal fade" id="modalTambahMurid" tabindex="-1" aria-labelledby="modalTambahMuridLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="modalTambahMuridLabel">
+                    <i class="bi bi-person-plus-fill text-primary me-2"></i>Tambah Murid Baru
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form action="{{ route('admin.murid.store') }}" method="POST">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-semibold small text-dark">Nama Lengkap <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control rounded-3 py-2" id="name" name="name" required placeholder="Contoh: Muhammad Ikram">
+                    </div>
 
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold small text-dark">Alamat Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control rounded-3 py-2" id="email" name="email" required placeholder="contoh@gmail.com">
+                    </div>
 
-<script>
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold small text-dark">Password Akun <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control rounded-3 py-2" id="password" name="password" required placeholder="Minimal 6 atau 8 karakter">
+                    </div>
 
-    // =========================
-    // BUKA MODAL
-    // =========================
+                    <input type="hidden" name="role" value="murid">
+                </div>
 
-    function openModal() {
+                <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4 fw-semibold border" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">Simpan Murid</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-        document
-            .getElementById('modalMurid')
-            .style.display = 'flex';
-
-    }
-
-
-    // =========================
-    // TUTUP MODAL
-    // =========================
-
-    function closeModal() {
-
-        document
-            .getElementById('modalMurid')
-            .style.display = 'none';
-
-    }
-
-
-    // =========================
-    // KLIK DI LUAR MODAL
-    // =========================
-
-    window.onclick = function(event) {
-
-        const modal =
-            document.getElementById('modalMurid');
-
-        if (event.target === modal) {
-
-            closeModal();
-
-        }
-
-    }
-
-</script>
-
-
-</body>
-
-</html>
+@endsection

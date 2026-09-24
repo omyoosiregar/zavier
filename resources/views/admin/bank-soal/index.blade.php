@@ -594,7 +594,7 @@
             <div class="bank-action">
 
                 {{-- BELUM ADA ROUTE --}}
-                <a href="#"
+                <a href="{{ route('admin.soal-kecerdasan.index') }}"
                    class="btn-kelola btn-disabled">
 
                     Kelola

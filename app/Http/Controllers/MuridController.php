@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\PaketSoal;
+use App\Models\PaketKecerdasan;
 use App\Models\HasilUjian;
 use App\Models\HasilKepribadian;
+use App\Models\HasilKecerdasan;
+use App\Models\JawabanKecerdasan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MuridController extends Controller
 {
@@ -95,17 +99,152 @@ class MuridController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | PAKET SOAL
+    | PAKET SOAL MURID
+    |--------------------------------------------------------------------------
+    |
+    | Kecermatan:
+    |   PaketSoal
+    |
+    | Kepribadian:
+    |   tetap menggunakan sistem yang sudah ada
+    |
+    | Kecerdasan:
+    |   PaketKecerdasan
+    |
+    | Kecerdasan digabung ke koleksi $pakets supaya halaman
+    | murid/paket-soal dapat menampilkannya bersama paket lainnya.
     |--------------------------------------------------------------------------
     */
 
     public function paketSoal()
     {
-        $pakets = PaketSoal::latest()->get();
+        /*
+        |--------------------------------------------------------------------------
+        | PAKET KECERMATAN
+        |--------------------------------------------------------------------------
+        */
+
+        $paketsKecermatan = PaketSoal::latest()
+            ->get()
+            ->map(function ($paket) {
+
+                /*
+                | Tandai bahwa data berasal dari PaketSoal.
+                */
+
+                $paket->source_type = 'kecermatan';
+
+                $paket->source_id = $paket->id;
+
+                /*
+                | Jika jenis tes belum tersedia/berbeda,
+                | tetap beri label yang mudah digunakan di view.
+                */
+
+                $paket->jenis_tes =
+                    $paket->jenis_tes
+                    ?? 'Kecermatan';
+
+                return $paket;
+            });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAKET KECERDASAN
+        |--------------------------------------------------------------------------
+        */
+
+        $paketsKecerdasan = PaketKecerdasan::where(
+            'status',
+            true
+        )
+            ->latest()
+            ->get()
+            ->map(function ($paket) {
+
+                /*
+                | Tambahkan properti agar bentuk datanya
+                | mudah dibedakan oleh view.
+                */
+
+                $paket->source_type =
+                    'kecerdasan';
+
+                $paket->source_id =
+                    $paket->id;
+
+                $paket->jenis_tes =
+                    'Kecerdasan';
+
+                /*
+                | Nama kategori jika view membutuhkan.
+                */
+
+                $paket->kategori =
+                    $paket->kategori
+                    ?? 'Kecerdasan';
+
+                /*
+                | Hitung jumlah soal langsung dari relasi.
+                */
+
+                try {
+
+                    $paket->jumlah_soal =
+                        $paket->soals()->count();
+
+                } catch (\Throwable $e) {
+
+                    /*
+                    | Jangan membuat halaman paket soal
+                    | mati apabila relasi belum tersedia.
+                    */
+
+                    $paket->jumlah_soal =
+                        $paket->jumlah_soal
+                        ?? 0;
+                }
+
+                return $paket;
+            });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | GABUNGKAN
+        |--------------------------------------------------------------------------
+        */
+
+        $pakets =
+            $paketsKecermatan
+                ->concat($paketsKecerdasan)
+                ->sortByDesc(function ($paket) {
+
+                    return $paket->created_at
+                        ? $paket->created_at->timestamp
+                        : 0;
+                })
+                ->values();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA TAMBAHAN UNTUK VIEW
+        |--------------------------------------------------------------------------
+        |
+        | Variabel terpisah juga dikirim supaya view yang sudah ada
+        | dapat menggunakan salah satunya tanpa merusak sistem lama.
+        |--------------------------------------------------------------------------
+        */
 
         return view(
             'murid.paket-soal',
-            compact('pakets')
+            compact(
+                'pakets',
+                'paketsKecermatan',
+                'paketsKecerdasan'
+            )
         );
     }
 
@@ -185,7 +324,7 @@ class MuridController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | SIMPAN JAWABAN KOLOM
+    | SIMPAN JAWABAN KOLOM KECERMATAN
     |--------------------------------------------------------------------------
     */
 
@@ -494,6 +633,784 @@ class MuridController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | MULAI UJIAN KECERDASAN
+    |--------------------------------------------------------------------------
+    |
+    | Alur:
+    |
+    | Paket Kecerdasan
+    |       ↓
+    | Bank Soal
+    |       ↓
+    | Soal pilihan
+    |       ↓
+    | Mulai Ujian
+    |       ↓
+    | Jawaban
+    |       ↓
+    | Selesai
+    |       ↓
+    | Penilaian
+    |--------------------------------------------------------------------------
+    */
+
+    public function mulaiKecerdasan(
+        PaketKecerdasan $paketKecerdasan
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil soal paket
+        |--------------------------------------------------------------------------
+        */
+
+        $paketKecerdasan->load([
+            'soals'
+        ]);
+
+        $soals =
+            $paketKecerdasan->soals;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pastikan paket mempunyai soal
+        |--------------------------------------------------------------------------
+        */
+
+        if ($soals->isEmpty()) {
+
+            return redirect()
+                ->route('murid.paket-soal')
+                ->with(
+                    'error',
+                    'Paket kecerdasan belum memiliki soal.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil durasi
+        |--------------------------------------------------------------------------
+        */
+
+        $durasi =
+            (int) (
+                $paketKecerdasan->durasi
+                ?? 0
+            );
+
+        /*
+        | Jika durasi kosong, gunakan 60 menit
+        | agar ujian tetap dapat dimulai.
+        */
+
+        if ($durasi <= 0) {
+
+            $durasi = 60;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Bersihkan session ujian kecerdasan sebelumnya
+        |--------------------------------------------------------------------------
+        */
+
+        session()->forget([
+            'kecerdasan_paket_id',
+            'kecerdasan_hasil_id',
+            'kecerdasan_mulai',
+            'kecerdasan_jawaban',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Buat waktu mulai
+        |--------------------------------------------------------------------------
+        */
+
+        $mulai =
+            now();
+
+
+        $selesai =
+            $mulai->copy()
+                ->addMinutes(
+                    $durasi
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan session
+        |--------------------------------------------------------------------------
+        */
+
+        session([
+            'kecerdasan_paket_id' =>
+                $paketKecerdasan->id,
+
+            'kecerdasan_mulai' =>
+                $mulai->toDateTimeString(),
+
+            'kecerdasan_selesai' =>
+                $selesai->toDateTimeString(),
+
+            'kecerdasan_jawaban' =>
+                [],
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tampilkan halaman ujian
+        |--------------------------------------------------------------------------
+        */
+
+        return view(
+            'murid.kecerdasan.ujian',
+            [
+                'paketKecerdasan' =>
+                    $paketKecerdasan,
+
+                'soals' =>
+                    $soals,
+
+                'durasi' =>
+                    $durasi,
+
+                'waktuMulai' =>
+                    $mulai,
+
+                'waktuSelesai' =>
+                    $selesai,
+            ]
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIMPAN JAWABAN KECERDASAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function simpanJawabanKecerdasan(
+        Request $request
+    ) {
+        $request->validate([
+            'paket_kecerdasan_id' =>
+                'required|integer',
+
+            'soal_id' =>
+                'required|integer',
+
+            'jawaban' =>
+                'nullable|string|max:10',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pastikan paket benar
+        |--------------------------------------------------------------------------
+        */
+
+        $paket =
+            PaketKecerdasan::findOrFail(
+                $request->paket_kecerdasan_id
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pastikan soal memang milik paket
+        |--------------------------------------------------------------------------
+        */
+
+        $paket->load('soals');
+
+        $soal =
+            $paket->soals
+                ->firstWhere(
+                    'id',
+                    $request->soal_id
+                );
+
+
+        if (!$soal) {
+
+            return response()->json([
+                'success' =>
+                    false,
+
+                'message' =>
+                    'Soal tidak ditemukan dalam paket ini.'
+            ], 404);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Normalisasi jawaban
+        |--------------------------------------------------------------------------
+        */
+
+        $jawaban =
+            strtoupper(
+                trim(
+                    (string)
+                    (
+                        $request->jawaban
+                        ?? ''
+                    )
+                )
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan sementara ke session
+        |--------------------------------------------------------------------------
+        */
+
+        $jawabanSession =
+            session(
+                'kecerdasan_jawaban',
+                []
+            );
+
+
+        $jawabanSession[
+            (string) $soal->id
+        ] =
+            $jawaban;
+
+
+        session([
+            'kecerdasan_jawaban' =>
+                $jawabanSession
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cek apakah jawaban benar
+        |--------------------------------------------------------------------------
+        */
+
+        $kunci =
+            strtoupper(
+                trim(
+                    (string)
+                    (
+                        $soal->jawaban_benar
+                        ?? ''
+                    )
+                )
+            );
+
+
+        $benar =
+            $jawaban !== ''
+            &&
+            $kunci !== ''
+            &&
+            $jawaban === $kunci;
+
+
+        return response()->json([
+            'success' =>
+                true,
+
+            'message' =>
+                'Jawaban berhasil disimpan.',
+
+            'soal_id' =>
+                $soal->id,
+
+            'jawaban' =>
+                $jawaban,
+
+            'benar' =>
+                $benar,
+        ]);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SELESAI UJIAN KECERDASAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function selesaiKecerdasan(
+        Request $request
+    ) {
+        $paketId =
+            session(
+                'kecerdasan_paket_id'
+            );
+
+
+        if (!$paketId) {
+
+            return redirect()
+                ->route('murid.paket-soal')
+                ->with(
+                    'error',
+                    'Sesi ujian kecerdasan tidak ditemukan.'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil paket beserta soal
+        |--------------------------------------------------------------------------
+        */
+
+        $paket =
+            PaketKecerdasan::with([
+                'soals'
+            ])
+                ->findOrFail(
+                    $paketId
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Jawaban dari session
+        |--------------------------------------------------------------------------
+        */
+
+        $jawabanUser =
+            session(
+                'kecerdasan_jawaban',
+                []
+            );
+
+
+        $totalSoal =
+            $paket->soals->count();
+
+
+        $jumlahDijawab = 0;
+
+        $jumlahBenar = 0;
+
+        $jumlahSalah = 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Hasil per soal
+        |--------------------------------------------------------------------------
+        */
+
+        $detailJawaban = [];
+
+
+        foreach (
+            $paket->soals as $soal
+        ) {
+
+            $soalId =
+                (string)
+                $soal->id;
+
+
+            $jawaban =
+                $jawabanUser[
+                    $soalId
+                ] ?? '';
+
+
+            $jawaban =
+                strtoupper(
+                    trim(
+                        (string)
+                        $jawaban
+                    )
+                );
+
+
+            $kunci =
+                strtoupper(
+                    trim(
+                        (string)
+                        (
+                            $soal->jawaban_benar
+                            ?? ''
+                        )
+                    )
+                );
+
+
+            $dijawab =
+                $jawaban !== '';
+
+
+            $benar =
+                $dijawab
+                &&
+                $kunci !== ''
+                &&
+                $jawaban === $kunci;
+
+
+            if ($dijawab) {
+
+                $jumlahDijawab++;
+            }
+
+
+            if ($benar) {
+
+                $jumlahBenar++;
+
+            } elseif ($dijawab) {
+
+                $jumlahSalah++;
+            }
+
+
+            $detailJawaban[] = [
+                'soal_id' =>
+                    $soal->id,
+
+                'jawaban' =>
+                    $jawaban,
+
+                'benar' =>
+                    $benar,
+            ];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NILAI
+        |--------------------------------------------------------------------------
+        |
+        | Nilai 100 jika semua benar.
+        | Jawaban salah tidak mendapatkan nilai.
+        | Soal kosong juga tidak mendapatkan nilai.
+        |--------------------------------------------------------------------------
+        */
+
+        $nilai =
+            $totalSoal > 0
+                ? round(
+                    (
+                        $jumlahBenar /
+                        $totalSoal
+                    ) * 100,
+                    2
+                )
+                : 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tentukan kategori
+        |--------------------------------------------------------------------------
+        */
+
+        if ($nilai >= 90) {
+
+            $kategori =
+                'Sangat Baik';
+
+        } elseif ($nilai >= 80) {
+
+            $kategori =
+                'Baik';
+
+        } elseif ($nilai >= 70) {
+
+            $kategori =
+                'Cukup';
+
+        } elseif ($nilai >= 60) {
+
+            $kategori =
+                'Perlu Latihan';
+
+        } else {
+
+            $kategori =
+                'Perlu Banyak Latihan';
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan hasil + jawaban dalam transaksi
+        |--------------------------------------------------------------------------
+        */
+
+        $hasil = DB::transaction(
+            function () use (
+                $paket,
+                $totalSoal,
+                $jumlahDijawab,
+                $jumlahBenar,
+                $jumlahSalah,
+                $nilai,
+                $kategori,
+                $detailJawaban
+            ) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | Buat hasil ujian
+                |--------------------------------------------------------------------------
+                */
+
+                $hasil =
+                    HasilKecerdasan::create([
+
+                        'user_id' =>
+                            Auth::id(),
+
+                        'paket_kecerdasan_id' =>
+                            $paket->id,
+
+                        'started_at' =>
+                            session(
+                                'kecerdasan_mulai'
+                            ) ?? now(),
+
+                        'finished_at' =>
+                            now(),
+
+                        'jumlah_soal' =>
+                            $totalSoal,
+
+                        'jumlah_dijawab' =>
+                            $jumlahDijawab,
+
+                        'jumlah_benar' =>
+                            $jumlahBenar,
+
+                        'jumlah_salah' =>
+                            $jumlahSalah,
+
+                        'nilai' =>
+                            $nilai,
+
+                        'status' =>
+                            'finished',
+                    ]);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Simpan setiap jawaban
+                |--------------------------------------------------------------------------
+                */
+
+                foreach (
+                    $detailJawaban as $detail
+                ) {
+
+                    JawabanKecerdasan::create([
+
+                        'hasil_kecerdasan_id' =>
+                            $hasil->id,
+
+                        'soal_kecerdasan_id' =>
+                            $detail['soal_id'],
+
+                        'jawaban' =>
+                            $detail['jawaban'],
+
+                        'benar' =>
+                            $detail['benar'],
+                    ]);
+                }
+
+
+                return $hasil;
+            }
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Bersihkan session
+        |--------------------------------------------------------------------------
+        */
+
+        session()->forget([
+            'kecerdasan_paket_id',
+            'kecerdasan_hasil_id',
+            'kecerdasan_mulai',
+            'kecerdasan_selesai',
+            'kecerdasan_jawaban',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Masuk ke halaman hasil
+        |--------------------------------------------------------------------------
+        */
+
+        return redirect()
+            ->route(
+                'murid.kecerdasan.hasil',
+                $hasil->id
+            )
+            ->with(
+                'success',
+                'Ujian kecerdasan berhasil diselesaikan.'
+            );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HASIL UJIAN KECERDASAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function hasilKecerdasan(
+        HasilKecerdasan $hasil
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | Keamanan
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $hasil->user_id !==
+            Auth::id()
+        ) {
+
+            abort(
+                403,
+                'Anda tidak memiliki akses ke hasil ujian ini.'
+            );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Load relasi
+        |--------------------------------------------------------------------------
+        */
+
+        $hasil->load([
+            'paket',
+            'jawaban.soal',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Statistik
+        |--------------------------------------------------------------------------
+        */
+
+        $totalSoal =
+            (int) (
+                $hasil->jumlah_soal
+                ?? 0
+            );
+
+
+        $jumlahDijawab =
+            (int) (
+                $hasil->jumlah_dijawab
+                ?? 0
+            );
+
+
+        $jumlahBenar =
+            (int) (
+                $hasil->jumlah_benar
+                ?? 0
+            );
+
+
+        $jumlahSalah =
+            (int) (
+                $hasil->jumlah_salah
+                ?? 0
+            );
+
+
+        $tidakDijawab =
+            max(
+                0,
+                $totalSoal -
+                $jumlahDijawab
+            );
+
+
+        $nilai =
+            (float) (
+                $hasil->nilai
+                ?? 0
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Kategori
+        |--------------------------------------------------------------------------
+        */
+
+        if ($nilai >= 90) {
+
+            $kategori =
+                'Sangat Baik';
+
+        } elseif ($nilai >= 80) {
+
+            $kategori =
+                'Baik';
+
+        } elseif ($nilai >= 70) {
+
+            $kategori =
+                'Cukup';
+
+        } elseif ($nilai >= 60) {
+
+            $kategori =
+                'Perlu Latihan';
+
+        } else {
+
+            $kategori =
+                'Perlu Banyak Latihan';
+        }
+
+
+        return view(
+            'murid.kecerdasan.hasil',
+            compact(
+                'hasil',
+                'totalSoal',
+                'jumlahDijawab',
+                'jumlahBenar',
+                'jumlahSalah',
+                'tidakDijawab',
+                'nilai',
+                'kategori'
+            )
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | RIWAYAT SEMUA UJIAN
     |--------------------------------------------------------------------------
     |
@@ -503,7 +1420,10 @@ class MuridController extends Controller
     | KEPRIBADIAN
     |   -> HasilKepribadian
     |
-    | Keduanya digabung untuk halaman Riwayat.
+    | KECERDASAN
+    |   -> HasilKecerdasan
+    |
+    | Ketiganya digabung.
     |--------------------------------------------------------------------------
     */
 
@@ -516,7 +1436,7 @@ class MuridController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL HASIL KECERMATAN
+        | HASIL KECERMATAN
         |--------------------------------------------------------------------------
         */
 
@@ -590,7 +1510,7 @@ class MuridController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | AMBIL HASIL KEPRIBADIAN
+        | HASIL KEPRIBADIAN
         |--------------------------------------------------------------------------
         */
 
@@ -611,12 +1531,6 @@ class MuridController extends Controller
                                 $hasil->persentase ?? 0
                             );
 
-
-                        /*
-                        |----------------------------------------------------------
-                        | KATEGORI KEPRIBADIAN
-                        |----------------------------------------------------------
-                        */
 
                         if ($persentase >= 80) {
 
@@ -696,7 +1610,113 @@ class MuridController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | GABUNGKAN
+        | HASIL KECERDASAN
+        |--------------------------------------------------------------------------
+        */
+
+        $hasilKecerdasan =
+            HasilKecerdasan::with(
+                'paket'
+            )
+                ->where(
+                    'user_id',
+                    $userId
+                )
+                ->get()
+                ->map(
+                    function ($hasil) {
+
+                        $namaPaket =
+                            $hasil->paket->nama_paket
+                            ?? 'Paket Kecerdasan';
+
+
+                        $nilai =
+                            (float) (
+                                $hasil->nilai ?? 0
+                            );
+
+
+                        if ($nilai >= 90) {
+
+                            $kategori =
+                                'Sangat Baik';
+
+                        } elseif ($nilai >= 80) {
+
+                            $kategori =
+                                'Baik';
+
+                        } elseif ($nilai >= 70) {
+
+                            $kategori =
+                                'Cukup';
+
+                        } elseif ($nilai >= 60) {
+
+                            $kategori =
+                                'Perlu Latihan';
+
+                        } else {
+
+                            $kategori =
+                                'Perlu Banyak Latihan';
+                        }
+
+
+                        return (object) [
+
+                            'id' =>
+                                $hasil->id,
+
+                            'tipe' =>
+                                'kecerdasan',
+
+                            'nama_paket' =>
+                                $namaPaket,
+
+                            'nilai' =>
+                                $nilai,
+
+                            'kategori' =>
+                                $kategori,
+
+                            'total_soal' =>
+                                (int) (
+                                    $hasil->jumlah_soal ?? 0
+                                ),
+
+                            'jumlah_dijawab' =>
+                                (int) (
+                                    $hasil->jumlah_dijawab ?? 0
+                                ),
+
+                            'tanggal' =>
+                                $hasil->finished_at
+                                ?? $hasil->created_at,
+
+                            'url' =>
+                                route(
+                                    'murid.kecerdasan.hasil',
+                                    $hasil->id
+                                ),
+
+                            'icon' =>
+                                'bi-lightbulb-fill',
+
+                            'warna' =>
+                                'kecerdasan',
+
+                            'asli' =>
+                                $hasil,
+                        ];
+                    }
+                );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | GABUNGKAN SEMUA
         |--------------------------------------------------------------------------
         */
 
@@ -704,6 +1724,9 @@ class MuridController extends Controller
             $hasilKecermatan
                 ->concat(
                     $hasilKepribadian
+                )
+                ->concat(
+                    $hasilKecerdasan
                 )
                 ->sortByDesc(
                     function ($hasil) {
@@ -851,7 +1874,7 @@ class MuridController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | DATA UNTUK GRAFIK
+        | DATA GRAFIK
         |--------------------------------------------------------------------------
         */
 
@@ -901,21 +1924,12 @@ class MuridController extends Controller
             'murid.hasil-index',
             [
 
-                /*
-                | Koleksi gabungan.
-                */
                 'hasilUjians' =>
                     $semuaHasil,
 
-                /*
-                | Alias agar mudah dipakai.
-                */
                 'semuaHasil' =>
                     $semuaHasil,
 
-                /*
-                | Statistik.
-                */
                 'totalUjian' =>
                     $totalUjian,
 
@@ -984,12 +1998,6 @@ class MuridController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | DATA GRAFIK
-        |--------------------------------------------------------------------------
-        */
-
         $grafikLabel = [];
 
         $grafikNilai = [];
@@ -1023,12 +2031,6 @@ class MuridController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TOTAL
-        |--------------------------------------------------------------------------
-        */
-
         $totalBenar =
             (int) (
                 $hasil->total_benar
@@ -1042,26 +2044,15 @@ class MuridController extends Controller
             );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TOTAL DIJAWAB
-        |--------------------------------------------------------------------------
-        */
-
         $jumlahDijawab =
             $hasil->jumlah_dijawab;
+
 
         $totalDijawab =
             $this->totalDijawabKecermatan(
                 $jumlahDijawab
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | TOTAL SALAH
-        |--------------------------------------------------------------------------
-        */
 
         $totalSalah =
             max(
@@ -1071,12 +2062,6 @@ class MuridController extends Controller
             );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | TOTAL TIDAK DIJAWAB
-        |--------------------------------------------------------------------------
-        */
-
         $totalTidakDijawab =
             max(
                 0,
@@ -1084,12 +2069,6 @@ class MuridController extends Controller
                 $totalDijawab
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | VIEW
-        |--------------------------------------------------------------------------
-        */
 
         return view(
             'murid.hasil',
@@ -1120,10 +2099,6 @@ class MuridController extends Controller
     private function totalDijawabKecermatan(
         $jumlahDijawab
     ) {
-        /*
-        | Data bisa berupa ARRAY.
-        */
-
         if (
             is_array(
                 $jumlahDijawab
@@ -1139,10 +2114,6 @@ class MuridController extends Controller
         }
 
 
-        /*
-        | Data bisa berupa angka.
-        */
-
         if (
             is_numeric(
                 $jumlahDijawab
@@ -1152,10 +2123,6 @@ class MuridController extends Controller
             return (int) $jumlahDijawab;
         }
 
-
-        /*
-        | Data bisa berupa JSON string.
-        */
 
         if (
             is_string(
@@ -1200,7 +2167,7 @@ class MuridController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | HITUNG STATISTIK KOLOM
+    | HITUNG STATISTIK KOLOM KECERMATAN
     |--------------------------------------------------------------------------
     */
 
@@ -1310,7 +2277,7 @@ class MuridController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | ANALISIS PERFORMA
+    | ANALISIS PERFORMA KECERMATAN
     |--------------------------------------------------------------------------
     */
 

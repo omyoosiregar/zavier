@@ -711,7 +711,7 @@
                 {{-- ROUTE BELUM DIBUAT --}}
 
                 <a
-                    href="#"
+                    href="{{ route('admin.paket-kecerdasan.index') }}"
                     class="btn-kelola btn-disabled"
                 >
 
