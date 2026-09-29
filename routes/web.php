@@ -17,6 +17,15 @@ use App\Http\Controllers\KepribadianMuridController;
 use App\Http\Controllers\SoalKecerdasanController;
 use App\Http\Controllers\PaketKecerdasanController;
 use App\Http\Controllers\KecerdasanMuridController;
+use App\Http\Controllers\AdminRiwayatKecerdasanController;
+
+// Controller Tryout Terpadu
+use App\Http\Controllers\Admin\TryoutAdminController;
+use App\Http\Controllers\Murid\TryoutMuridController;
+
+// Controller Materi & Pembahasan Soal
+use App\Http\Controllers\Admin\MateriPembahasanAdminController;
+use App\Http\Controllers\Murid\MateriPembahasanMuridController;
 
 /*
 |--------------------------------------------------------------------------
@@ -211,10 +220,30 @@ Route::middleware([
     |--------------------------------------------------------------------------
     */
     Route::prefix('riwayat-kecerdasan')->name('riwayat-kecerdasan.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\AdminRiwayatKecerdasanController::class, 'index'])->name('index');
-        Route::get('/{hasil}', [\App\Http\Controllers\AdminRiwayatKecerdasanController::class, 'show'])->name('show');
-        Route::delete('/{hasil}', [\App\Http\Controllers\AdminRiwayatKecerdasanController::class, 'destroy'])->name('destroy');
+        Route::get('/', [AdminRiwayatKecerdasanController::class, 'index'])->name('index');
+        Route::get('/{hasil}', [AdminRiwayatKecerdasanController::class, 'show'])->name('show');
+        Route::delete('/{hasil}', [AdminRiwayatKecerdasanController::class, 'destroy'])->name('destroy');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | MASTER PAKET & REKAP TRYOUT PSIKOLOGI POLRI (SUPER ADMIN)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('tryout')->name('tryout.')->group(function () {
+        Route::get('/', [TryoutAdminController::class, 'index'])->name('index');
+        Route::get('/create', [TryoutAdminController::class, 'create'])->name('create');
+        Route::post('/', [TryoutAdminController::class, 'store'])->name('store');
+        Route::delete('/{tryout}', [TryoutAdminController::class, 'destroy'])->name('destroy');
+        Route::get('/rekap-nilai', [TryoutAdminController::class, 'rekapHasil'])->name('rekap');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | MODUL PEMBAHASAN SOAL (SUPER ADMIN)
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('pembahasan', MateriPembahasanAdminController::class);
 
 });
 
@@ -272,9 +301,7 @@ Route::middleware([
     */
     Route::get('/paket-soal', [MuridController::class, 'paketSoal'])->name('paket-soal');
 
-    // Route dinamis yang memeriksa tipe paket agar tidak terjadi TypeError
     Route::get('/ujian/{paketSoal}', function ($id) {
-        // 1. Cek apakah ID yang dikirim merupakan Paket Kecerdasan
         if (class_exists(\App\Models\PaketKecerdasan::class)) {
             $isKecerdasan = \App\Models\PaketKecerdasan::where('id', $id)->exists();
             if ($isKecerdasan) {
@@ -282,7 +309,6 @@ Route::middleware([
             }
         }
 
-        // 2. Ambil model PaketSoal (Kecermatan) sebelum dikirim ke controller
         $paketModel = \App\Models\PaketSoal::find($id);
 
         if (!$paketModel) {
@@ -309,6 +335,31 @@ Route::middleware([
     Route::post('/kecerdasan/jawab/{hasil}', [KecerdasanMuridController::class, 'jawab'])->name('kecerdasan.jawab');
     Route::post('/kecerdasan/{hasil}/selesai', [KecerdasanMuridController::class, 'selesai'])->name('kecerdasan.selesai');
     Route::get('/kecerdasan-riwayat', [KecerdasanMuridController::class, 'riwayat'])->name('kecerdasan.riwayat');
+
+    /*
+    |--------------------------------------------------------------------------
+    | ALUR SIMULASI TRYOUT PSIKOLOGI LENGKAP
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('tryout')->name('tryout.')->group(function () {
+        Route::get('/', [TryoutMuridController::class, 'index'])->name('index');
+        Route::get('/{tryout}/mulai', [TryoutMuridController::class, 'mulai'])->name('mulai');
+        Route::get('/{hasil}/lanjut', [TryoutMuridController::class, 'arahkanTahap'])->name('lanjut');
+        Route::post('/{hasil}/skip-jeda', [TryoutMuridController::class, 'skipJeda'])->name('skip_jeda');
+        Route::post('/{hasil}/submit-kecerdasan', [TryoutMuridController::class, 'submitKecerdasan'])->name('submit.kecerdasan');
+        Route::post('/{hasil}/submit-kepribadian', [TryoutMuridController::class, 'submitKepribadian'])->name('submit.kepribadian');
+        Route::post('/{hasil}/submit-kecermatan', [TryoutMuridController::class, 'submitKecermatan'])->name('submit.kecermatan');
+        Route::get('/{hasil}/hasil', [TryoutMuridController::class, 'hasil'])->name('hasil');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | MATERI & PEMBAHASAN SOAL (MURID)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/pembahasan', [MateriPembahasanMuridController::class, 'index'])->name('pembahasan.index');
+    Route::get('/pembahasan/{materi}', [MateriPembahasanMuridController::class, 'show'])->name('pembahasan.show');
+    Route::get('/pembahasan/{materi}/stream', [MateriPembahasanMuridController::class, 'streamFile'])->name('pembahasan.stream');
 
 });
 

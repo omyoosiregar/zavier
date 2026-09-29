@@ -370,6 +370,12 @@
                 Riwayat
             </a>
 
+<li class="nav-item">
+    <a class="nav-link {{ request()->routeIs('murid.pembahasan.*') ? 'active fw-bold text-primary' : '' }}" href="{{ route('murid.pembahasan.index') }}">
+        <i class="bi bi-book-half me-1"></i> Pembahasan Soal
+    </a>
+</li>
+
             <a href="javascript:void(0)" class="disabled">
                 <i class="bi bi-trophy-fill"></i>
                 Ranking

@@ -1091,6 +1091,20 @@
 
             </a>
 
+            <a href="{{ route('admin.tryout.index') }}" 
+   class="{{ request()->routeIs('admin.tryout.*') ? 'active' : '' }}" 
+   title="Tryout Psikologi">
+    <i class="bi bi-award-fill"></i>
+    <span class="nav-text">Tryout Psikologi</span>
+</a>
+
+<a href="{{ route('admin.pembahasan.index') }}" 
+   class="nav-item-custom {{ request()->routeIs('admin.pembahasan.*') ? 'active' : '' }}" 
+   title="Pembahasan Soal">
+    <i class="bi bi-book-half"></i>
+    <span class="nav-text">Pembahasan Soal</span>
+</a>
+
         </nav>
 
 

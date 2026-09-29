@@ -8,6 +8,8 @@ use App\Models\HasilUjian;
 use App\Models\HasilKepribadian;
 use App\Models\HasilKecerdasan;
 use App\Models\JawabanKecerdasan;
+use App\Models\PaketTryout;
+use App\Models\HasilTryout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -106,13 +108,13 @@ class MuridController extends Controller
     |   PaketSoal
     |
     | Kepribadian:
-    |   tetap menggunakan sistem yang sudah ada
+    |   bank_kepribadian (atau model yang tersedia)
     |
     | Kecerdasan:
     |   PaketKecerdasan
     |
-    | Kecerdasan digabung ke koleksi $pakets supaya halaman
-    | murid/paket-soal dapat menampilkannya bersama paket lainnya.
+    | Tryout Psikologi:
+    |   PaketTryout (Terpadu POLRI)
     |--------------------------------------------------------------------------
     */
 
@@ -128,22 +130,9 @@ class MuridController extends Controller
             ->get()
             ->map(function ($paket) {
 
-                /*
-                | Tandai bahwa data berasal dari PaketSoal.
-                */
-
                 $paket->source_type = 'kecermatan';
-
                 $paket->source_id = $paket->id;
-
-                /*
-                | Jika jenis tes belum tersedia/berbeda,
-                | tetap beri label yang mudah digunakan di view.
-                */
-
-                $paket->jenis_tes =
-                    $paket->jenis_tes
-                    ?? 'Kecermatan';
+                $paket->jenis_tes = $paket->jenis_tes ?? 'Kecermatan';
 
                 return $paket;
             });
@@ -155,55 +144,20 @@ class MuridController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $paketsKecerdasan = PaketKecerdasan::where(
-            'status',
-            true
-        )
+        $paketsKecerdasan = PaketKecerdasan::where('status', true)
             ->latest()
             ->get()
             ->map(function ($paket) {
 
-                /*
-                | Tambahkan properti agar bentuk datanya
-                | mudah dibedakan oleh view.
-                */
-
-                $paket->source_type =
-                    'kecerdasan';
-
-                $paket->source_id =
-                    $paket->id;
-
-                $paket->jenis_tes =
-                    'Kecerdasan';
-
-                /*
-                | Nama kategori jika view membutuhkan.
-                */
-
-                $paket->kategori =
-                    $paket->kategori
-                    ?? 'Kecerdasan';
-
-                /*
-                | Hitung jumlah soal langsung dari relasi.
-                */
+                $paket->source_type = 'kecerdasan';
+                $paket->source_id = $paket->id;
+                $paket->jenis_tes = 'Kecerdasan';
+                $paket->kategori = $paket->kategori ?? 'Kecerdasan';
 
                 try {
-
-                    $paket->jumlah_soal =
-                        $paket->soals()->count();
-
+                    $paket->jumlah_soal = $paket->soals()->count();
                 } catch (\Throwable $e) {
-
-                    /*
-                    | Jangan membuat halaman paket soal
-                    | mati apabila relasi belum tersedia.
-                    */
-
-                    $paket->jumlah_soal =
-                        $paket->jumlah_soal
-                        ?? 0;
+                    $paket->jumlah_soal = $paket->jumlah_soal ?? 0;
                 }
 
                 return $paket;
@@ -212,29 +166,53 @@ class MuridController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | GABUNGKAN
+        | PAKET KEPRIBADIAN
         |--------------------------------------------------------------------------
         */
 
-        $pakets =
-            $paketsKecermatan
-                ->concat($paketsKecerdasan)
-                ->sortByDesc(function ($paket) {
-
-                    return $paket->created_at
-                        ? $paket->created_at->timestamp
-                        : 0;
-                })
-                ->values();
+        $paketsKepribadian = collect();
+        if (class_exists(\App\Models\BankKepribadian::class)) {
+            $paketsKepribadian = \App\Models\BankKepribadian::latest()->get();
+        } elseif (class_exists(\App\Models\KepribadianBank::class)) {
+            $paketsKepribadian = \App\Models\KepribadianBank::latest()->get();
+        } elseif (\Illuminate\Support\Facades\Schema::hasTable('bank_kepribadian')) {
+            $paketsKepribadian = DB::table('bank_kepribadian')->latest()->get();
+        }
 
 
         /*
         |--------------------------------------------------------------------------
-        | DATA TAMBAHAN UNTUK VIEW
+        | PAKET TRYOUT PSIKOLOGI (TERPADU POLRI)
         |--------------------------------------------------------------------------
-        |
-        | Variabel terpisah juga dikirim supaya view yang sudah ada
-        | dapat menggunakan salah satunya tanpa merusak sistem lama.
+        */
+
+        $paketTryout = class_exists(PaketTryout::class)
+            ? PaketTryout::with(['paketKecerdasan', 'paketKecermatan'])
+                ->where('is_active', true)
+                ->latest()
+                ->get()
+            : collect();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | GABUNGKAN KECERMATAN & KECERDASAN
+        |--------------------------------------------------------------------------
+        */
+
+        $pakets = $paketsKecermatan
+            ->concat($paketsKecerdasan)
+            ->sortByDesc(function ($paket) {
+                return $paket->created_at
+                    ? $paket->created_at->timestamp
+                    : 0;
+            })
+            ->values();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KIRIM KE VIEW
         |--------------------------------------------------------------------------
         */
 
@@ -243,7 +221,9 @@ class MuridController extends Controller
             compact(
                 'pakets',
                 'paketsKecermatan',
-                'paketsKecerdasan'
+                'paketsKecerdasan',
+                'paketsKepribadian',
+                'paketTryout'
             )
         );
     }
@@ -635,46 +615,17 @@ class MuridController extends Controller
     |--------------------------------------------------------------------------
     | MULAI UJIAN KECERDASAN
     |--------------------------------------------------------------------------
-    |
-    | Alur:
-    |
-    | Paket Kecerdasan
-    |       ↓
-    | Bank Soal
-    |       ↓
-    | Soal pilihan
-    |       ↓
-    | Mulai Ujian
-    |       ↓
-    | Jawaban
-    |       ↓
-    | Selesai
-    |       ↓
-    | Penilaian
-    |--------------------------------------------------------------------------
     */
 
     public function mulaiKecerdasan(
         PaketKecerdasan $paketKecerdasan
     ) {
-        /*
-        |--------------------------------------------------------------------------
-        | Ambil soal paket
-        |--------------------------------------------------------------------------
-        */
-
         $paketKecerdasan->load([
             'soals'
         ]);
 
         $soals =
             $paketKecerdasan->soals;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Pastikan paket mempunyai soal
-        |--------------------------------------------------------------------------
-        */
 
         if ($soals->isEmpty()) {
 
@@ -686,35 +637,16 @@ class MuridController extends Controller
                 );
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Ambil durasi
-        |--------------------------------------------------------------------------
-        */
-
         $durasi =
             (int) (
                 $paketKecerdasan->durasi
                 ?? 0
             );
 
-        /*
-        | Jika durasi kosong, gunakan 60 menit
-        | agar ujian tetap dapat dimulai.
-        */
-
         if ($durasi <= 0) {
 
             $durasi = 60;
         }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Bersihkan session ujian kecerdasan sebelumnya
-        |--------------------------------------------------------------------------
-        */
 
         session()->forget([
             'kecerdasan_paket_id',
@@ -723,29 +655,14 @@ class MuridController extends Controller
             'kecerdasan_jawaban',
         ]);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Buat waktu mulai
-        |--------------------------------------------------------------------------
-        */
-
         $mulai =
             now();
-
 
         $selesai =
             $mulai->copy()
                 ->addMinutes(
                     $durasi
                 );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Simpan session
-        |--------------------------------------------------------------------------
-        */
 
         session([
             'kecerdasan_paket_id' =>
@@ -760,13 +677,6 @@ class MuridController extends Controller
             'kecerdasan_jawaban' =>
                 [],
         ]);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Tampilkan halaman ujian
-        |--------------------------------------------------------------------------
-        */
 
         return view(
             'murid.kecerdasan.ujian',
@@ -810,24 +720,10 @@ class MuridController extends Controller
                 'nullable|string|max:10',
         ]);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Pastikan paket benar
-        |--------------------------------------------------------------------------
-        */
-
         $paket =
             PaketKecerdasan::findOrFail(
                 $request->paket_kecerdasan_id
             );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Pastikan soal memang milik paket
-        |--------------------------------------------------------------------------
-        */
 
         $paket->load('soals');
 
@@ -837,7 +733,6 @@ class MuridController extends Controller
                     'id',
                     $request->soal_id
                 );
-
 
         if (!$soal) {
 
@@ -850,13 +745,6 @@ class MuridController extends Controller
             ], 404);
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Normalisasi jawaban
-        |--------------------------------------------------------------------------
-        */
-
         $jawaban =
             strtoupper(
                 trim(
@@ -868,37 +756,21 @@ class MuridController extends Controller
                 )
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Simpan sementara ke session
-        |--------------------------------------------------------------------------
-        */
-
         $jawabanSession =
             session(
                 'kecerdasan_jawaban',
                 []
             );
 
-
         $jawabanSession[
             (string) $soal->id
         ] =
             $jawaban;
 
-
         session([
             'kecerdasan_jawaban' =>
                 $jawabanSession
         ]);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Cek apakah jawaban benar
-        |--------------------------------------------------------------------------
-        */
 
         $kunci =
             strtoupper(
@@ -911,14 +783,12 @@ class MuridController extends Controller
                 )
             );
 
-
         $benar =
             $jawaban !== ''
             &&
             $kunci !== ''
             &&
             $jawaban === $kunci;
-
 
         return response()->json([
             'success' =>
@@ -953,7 +823,6 @@ class MuridController extends Controller
                 'kecerdasan_paket_id'
             );
 
-
         if (!$paketId) {
 
             return redirect()
@@ -964,13 +833,6 @@ class MuridController extends Controller
                 );
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Ambil paket beserta soal
-        |--------------------------------------------------------------------------
-        */
-
         $paket =
             PaketKecerdasan::with([
                 'soals'
@@ -979,39 +841,20 @@ class MuridController extends Controller
                     $paketId
                 );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Jawaban dari session
-        |--------------------------------------------------------------------------
-        */
-
         $jawabanUser =
             session(
                 'kecerdasan_jawaban',
                 []
             );
 
-
         $totalSoal =
             $paket->soals->count();
 
-
         $jumlahDijawab = 0;
-
         $jumlahBenar = 0;
-
         $jumlahSalah = 0;
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Hasil per soal
-        |--------------------------------------------------------------------------
-        */
-
         $detailJawaban = [];
-
 
         foreach (
             $paket->soals as $soal
@@ -1021,12 +864,10 @@ class MuridController extends Controller
                 (string)
                 $soal->id;
 
-
             $jawaban =
                 $jawabanUser[
                     $soalId
                 ] ?? '';
-
 
             $jawaban =
                 strtoupper(
@@ -1035,7 +876,6 @@ class MuridController extends Controller
                         $jawaban
                     )
                 );
-
 
             $kunci =
                 strtoupper(
@@ -1048,10 +888,8 @@ class MuridController extends Controller
                     )
                 );
 
-
             $dijawab =
                 $jawaban !== '';
-
 
             $benar =
                 $dijawab
@@ -1060,22 +898,15 @@ class MuridController extends Controller
                 &&
                 $jawaban === $kunci;
 
-
             if ($dijawab) {
-
                 $jumlahDijawab++;
             }
 
-
             if ($benar) {
-
                 $jumlahBenar++;
-
             } elseif ($dijawab) {
-
                 $jumlahSalah++;
             }
-
 
             $detailJawaban[] = [
                 'soal_id' =>
@@ -1089,18 +920,6 @@ class MuridController extends Controller
             ];
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | NILAI
-        |--------------------------------------------------------------------------
-        |
-        | Nilai 100 jika semua benar.
-        | Jawaban salah tidak mendapatkan nilai.
-        | Soal kosong juga tidak mendapatkan nilai.
-        |--------------------------------------------------------------------------
-        */
-
         $nilai =
             $totalSoal > 0
                 ? round(
@@ -1112,45 +931,17 @@ class MuridController extends Controller
                 )
                 : 0;
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Tentukan kategori
-        |--------------------------------------------------------------------------
-        */
-
         if ($nilai >= 90) {
-
-            $kategori =
-                'Sangat Baik';
-
+            $kategori = 'Sangat Baik';
         } elseif ($nilai >= 80) {
-
-            $kategori =
-                'Baik';
-
+            $kategori = 'Baik';
         } elseif ($nilai >= 70) {
-
-            $kategori =
-                'Cukup';
-
+            $kategori = 'Cukup';
         } elseif ($nilai >= 60) {
-
-            $kategori =
-                'Perlu Latihan';
-
+            $kategori = 'Perlu Latihan';
         } else {
-
-            $kategori =
-                'Perlu Banyak Latihan';
+            $kategori = 'Perlu Banyak Latihan';
         }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Simpan hasil + jawaban dalam transaksi
-        |--------------------------------------------------------------------------
-        */
 
         $hasil = DB::transaction(
             function () use (
@@ -1163,12 +954,6 @@ class MuridController extends Controller
                 $kategori,
                 $detailJawaban
             ) {
-
-                /*
-                |--------------------------------------------------------------------------
-                | Buat hasil ujian
-                |--------------------------------------------------------------------------
-                */
 
                 $hasil =
                     HasilKecerdasan::create([
@@ -1206,13 +991,6 @@ class MuridController extends Controller
                             'finished',
                     ]);
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | Simpan setiap jawaban
-                |--------------------------------------------------------------------------
-                */
-
                 foreach (
                     $detailJawaban as $detail
                 ) {
@@ -1233,17 +1011,9 @@ class MuridController extends Controller
                     ]);
                 }
 
-
                 return $hasil;
             }
         );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Bersihkan session
-        |--------------------------------------------------------------------------
-        */
 
         session()->forget([
             'kecerdasan_paket_id',
@@ -1252,13 +1022,6 @@ class MuridController extends Controller
             'kecerdasan_selesai',
             'kecerdasan_jawaban',
         ]);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Masuk ke halaman hasil
-        |--------------------------------------------------------------------------
-        */
 
         return redirect()
             ->route(
@@ -1281,12 +1044,6 @@ class MuridController extends Controller
     public function hasilKecerdasan(
         HasilKecerdasan $hasil
     ) {
-        /*
-        |--------------------------------------------------------------------------
-        | Keamanan
-        |--------------------------------------------------------------------------
-        */
-
         if (
             $hasil->user_id !==
             Auth::id()
@@ -1298,24 +1055,10 @@ class MuridController extends Controller
             );
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Load relasi
-        |--------------------------------------------------------------------------
-        */
-
         $hasil->load([
             'paket',
             'jawaban.soal',
         ]);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Statistik
-        |--------------------------------------------------------------------------
-        */
 
         $totalSoal =
             (int) (
@@ -1323,13 +1066,11 @@ class MuridController extends Controller
                 ?? 0
             );
 
-
         $jumlahDijawab =
             (int) (
                 $hasil->jumlah_dijawab
                 ?? 0
             );
-
 
         $jumlahBenar =
             (int) (
@@ -1337,13 +1078,11 @@ class MuridController extends Controller
                 ?? 0
             );
 
-
         $jumlahSalah =
             (int) (
                 $hasil->jumlah_salah
                 ?? 0
             );
-
 
         $tidakDijawab =
             max(
@@ -1352,46 +1091,23 @@ class MuridController extends Controller
                 $jumlahDijawab
             );
 
-
         $nilai =
             (float) (
                 $hasil->nilai
                 ?? 0
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Kategori
-        |--------------------------------------------------------------------------
-        */
-
         if ($nilai >= 90) {
-
-            $kategori =
-                'Sangat Baik';
-
+            $kategori = 'Sangat Baik';
         } elseif ($nilai >= 80) {
-
-            $kategori =
-                'Baik';
-
+            $kategori = 'Baik';
         } elseif ($nilai >= 70) {
-
-            $kategori =
-                'Cukup';
-
+            $kategori = 'Cukup';
         } elseif ($nilai >= 60) {
-
-            $kategori =
-                'Perlu Latihan';
-
+            $kategori = 'Perlu Latihan';
         } else {
-
-            $kategori =
-                'Perlu Banyak Latihan';
+            $kategori = 'Perlu Banyak Latihan';
         }
-
 
         return view(
             'murid.kecerdasan.hasil',
@@ -1414,25 +1130,19 @@ class MuridController extends Controller
     | RIWAYAT SEMUA UJIAN
     |--------------------------------------------------------------------------
     |
-    | KECERMATAN
-    |   -> HasilUjian
+    | KECERMATAN -> HasilUjian
+    | KEPRIBADIAN -> HasilKepribadian
+    | KECERDASAN -> HasilKecerdasan
+    | TRYOUT PSIKOLOGI -> HasilTryout
     |
-    | KEPRIBADIAN
-    |   -> HasilKepribadian
-    |
-    | KECERDASAN
-    |   -> HasilKecerdasan
-    |
-    | Ketiganya digabung.
+    | Semuanya digabung menjadi satu list riwayat terpadu.
     |--------------------------------------------------------------------------
     */
 
     public function hasilIndex(
         Request $request
     ) {
-        $userId =
-            Auth::id();
-
+        $userId = Auth::id();
 
         /*
         |--------------------------------------------------------------------------
@@ -1440,72 +1150,28 @@ class MuridController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $hasilKecermatan =
-            HasilUjian::with(
-                'paketSoal'
-            )
-                ->where(
-                    'user_id',
-                    $userId
-                )
-                ->get()
-                ->map(
-                    function ($hasil) {
+        $hasilKecermatan = HasilUjian::with('paketSoal')
+            ->where('user_id', $userId)
+            ->get()
+            ->map(function ($hasil) {
 
-                        $namaPaket =
-                            $hasil->paketSoal->nama_paket
-                            ?? 'Paket Kecermatan';
+                $namaPaket = $hasil->paketSoal->nama_paket ?? 'Paket Kecermatan';
 
-                        return (object) [
-
-                            'id' =>
-                                $hasil->id,
-
-                            'tipe' =>
-                                'kecermatan',
-
-                            'nama_paket' =>
-                                $namaPaket,
-
-                            'nilai' =>
-                                (float) (
-                                    $hasil->nilai ?? 0
-                                ),
-
-                            'kategori' =>
-                                $hasil->kategori
-                                ?? 'Belum Ada Kategori',
-
-                            'total_soal' =>
-                                (int) (
-                                    $hasil->total_soal ?? 0
-                                ),
-
-                            'jumlah_dijawab' =>
-                                $this->totalDijawabKecermatan(
-                                    $hasil->jumlah_dijawab
-                                ),
-
-                            'tanggal' =>
-                                $hasil->selesai_pada,
-
-                            'url' =>
-                                route(
-                                    'murid.hasil',
-                                    $hasil->id
-                                ),
-
-                            'icon' =>
-                                'bi-bullseye',
-
-                            'warna' =>
-                                'kecermatan',
-
-                            'asli' =>
-                                $hasil,
-                        ];
-                    }
-                );
+                return (object) [
+                    'id' => $hasil->id,
+                    'tipe' => 'kecermatan',
+                    'nama_paket' => $namaPaket,
+                    'nilai' => (float) ($hasil->nilai ?? 0),
+                    'kategori' => $hasil->kategori ?? 'Belum Ada Kategori',
+                    'total_soal' => (int) ($hasil->total_soal ?? 0),
+                    'jumlah_dijawab' => $this->totalDijawabKecermatan($hasil->jumlah_dijawab),
+                    'tanggal' => $hasil->selesai_pada,
+                    'url' => route('murid.hasil', $hasil->id),
+                    'icon' => 'bi-bullseye',
+                    'warna' => 'kecermatan',
+                    'asli' => $hasil,
+                ];
+            });
 
 
         /*
@@ -1514,98 +1180,43 @@ class MuridController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $hasilKepribadian =
-            HasilKepribadian::with(
-                'bank'
-            )
-                ->where(
-                    'user_id',
-                    $userId
-                )
+        $hasilKepribadian = collect();
+        if (class_exists(HasilKepribadian::class)) {
+            $hasilKepribadian = HasilKepribadian::with('bank')
+                ->where('user_id', $userId)
                 ->get()
-                ->map(
-                    function ($hasil) {
+                ->map(function ($hasil) {
 
-                        $persentase =
-                            (float) (
-                                $hasil->persentase ?? 0
-                            );
+                    $persentase = (float) ($hasil->persentase ?? 0);
 
-
-                        if ($persentase >= 80) {
-
-                            $kategori =
-                                'Sangat Baik';
-
-                        } elseif ($persentase >= 70) {
-
-                            $kategori =
-                                'Baik';
-
-                        } elseif ($persentase >= 60) {
-
-                            $kategori =
-                                'Cukup';
-
-                        } else {
-
-                            $kategori =
-                                'Perlu Latihan';
-                        }
-
-
-                        $namaBank =
-                            $hasil->bank->nama_bank
-                            ?? 'Paket Kepribadian';
-
-
-                        return (object) [
-
-                            'id' =>
-                                $hasil->id,
-
-                            'tipe' =>
-                                'kepribadian',
-
-                            'nama_paket' =>
-                                $namaBank,
-
-                            'nilai' =>
-                                $persentase,
-
-                            'kategori' =>
-                                $kategori,
-
-                            'total_soal' =>
-                                (int) (
-                                    $hasil->total_soal ?? 0
-                                ),
-
-                            'jumlah_dijawab' =>
-                                (int) (
-                                    $hasil->jumlah_dijawab ?? 0
-                                ),
-
-                            'tanggal' =>
-                                $hasil->created_at,
-
-                            'url' =>
-                                route(
-                                    'murid.kepribadian.hasil',
-                                    $hasil->id
-                                ),
-
-                            'icon' =>
-                                'bi-person-badge-fill',
-
-                            'warna' =>
-                                'kepribadian',
-
-                            'asli' =>
-                                $hasil,
-                        ];
+                    if ($persentase >= 80) {
+                        $kategori = 'Sangat Baik';
+                    } elseif ($persentase >= 70) {
+                        $kategori = 'Baik';
+                    } elseif ($persentase >= 60) {
+                        $kategori = 'Cukup';
+                    } else {
+                        $kategori = 'Perlu Latihan';
                     }
-                );
+
+                    $namaBank = $hasil->bank->nama_bank ?? 'Paket Kepribadian';
+
+                    return (object) [
+                        'id' => $hasil->id,
+                        'tipe' => 'kepribadian',
+                        'nama_paket' => $namaBank,
+                        'nilai' => $persentase,
+                        'kategori' => $kategori,
+                        'total_soal' => (int) ($hasil->total_soal ?? 0),
+                        'jumlah_dijawab' => (int) ($hasil->jumlah_dijawab ?? 0),
+                        'tanggal' => $hasil->created_at,
+                        'url' => route('murid.kepribadian.hasil', $hasil->id),
+                        'icon' => 'bi-person-badge-fill',
+                        'warna' => 'kepribadian',
+                        'asli' => $hasil,
+                    ];
+                });
+        }
 
 
         /*
@@ -1614,104 +1225,75 @@ class MuridController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $hasilKecerdasan =
-            HasilKecerdasan::with(
-                'paket'
-            )
-                ->where(
-                    'user_id',
-                    $userId
-                )
+        $hasilKecerdasan = HasilKecerdasan::with('paket')
+            ->where('user_id', $userId)
+            ->get()
+            ->map(function ($hasil) {
+
+                $namaPaket = $hasil->paket->nama_paket ?? 'Paket Kecerdasan';
+                $nilai = (float) ($hasil->nilai ?? 0);
+
+                if ($nilai >= 90) {
+                    $kategori = 'Sangat Baik';
+                } elseif ($nilai >= 80) {
+                    $kategori = 'Baik';
+                } elseif ($nilai >= 70) {
+                    $kategori = 'Cukup';
+                } elseif ($nilai >= 60) {
+                    $kategori = 'Perlu Latihan';
+                } else {
+                    $kategori = 'Perlu Banyak Latihan';
+                }
+
+                return (object) [
+                    'id' => $hasil->id,
+                    'tipe' => 'kecerdasan',
+                    'nama_paket' => $namaPaket,
+                    'nilai' => $nilai,
+                    'kategori' => $kategori,
+                    'total_soal' => (int) ($hasil->jumlah_soal ?? 0),
+                    'jumlah_dijawab' => (int) ($hasil->jumlah_dijawab ?? 0),
+                    'tanggal' => $hasil->finished_at ?? $hasil->created_at,
+                    'url' => route('murid.kecerdasan.hasil', $hasil->id),
+                    'icon' => 'bi-lightbulb-fill',
+                    'warna' => 'kecerdasan',
+                    'asli' => $hasil,
+                ];
+            });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HASIL TRYOUT PSIKOLOGI (TERPADU POLRI)
+        |--------------------------------------------------------------------------
+        */
+
+        $hasilTryout = collect();
+        if (class_exists(HasilTryout::class)) {
+            $hasilTryout = HasilTryout::with('paketTryout')
+                ->where('user_id', $userId)
+                ->where('tahap_sekarang', 'selesai')
                 ->get()
-                ->map(
-                    function ($hasil) {
+                ->map(function ($hasil) {
 
-                        $namaPaket =
-                            $hasil->paket->nama_paket
-                            ?? 'Paket Kecerdasan';
+                    $namaJudul = $hasil->paketTryout->judul_tryout ?? 'Tryout CAT Psikologi';
 
-
-                        $nilai =
-                            (float) (
-                                $hasil->nilai ?? 0
-                            );
-
-
-                        if ($nilai >= 90) {
-
-                            $kategori =
-                                'Sangat Baik';
-
-                        } elseif ($nilai >= 80) {
-
-                            $kategori =
-                                'Baik';
-
-                        } elseif ($nilai >= 70) {
-
-                            $kategori =
-                                'Cukup';
-
-                        } elseif ($nilai >= 60) {
-
-                            $kategori =
-                                'Perlu Latihan';
-
-                        } else {
-
-                            $kategori =
-                                'Perlu Banyak Latihan';
-                        }
-
-
-                        return (object) [
-
-                            'id' =>
-                                $hasil->id,
-
-                            'tipe' =>
-                                'kecerdasan',
-
-                            'nama_paket' =>
-                                $namaPaket,
-
-                            'nilai' =>
-                                $nilai,
-
-                            'kategori' =>
-                                $kategori,
-
-                            'total_soal' =>
-                                (int) (
-                                    $hasil->jumlah_soal ?? 0
-                                ),
-
-                            'jumlah_dijawab' =>
-                                (int) (
-                                    $hasil->jumlah_dijawab ?? 0
-                                ),
-
-                            'tanggal' =>
-                                $hasil->finished_at
-                                ?? $hasil->created_at,
-
-                            'url' =>
-                                route(
-                                    'murid.kecerdasan.hasil',
-                                    $hasil->id
-                                ),
-
-                            'icon' =>
-                                'bi-lightbulb-fill',
-
-                            'warna' =>
-                                'kecerdasan',
-
-                            'asli' =>
-                                $hasil,
-                        ];
-                    }
-                );
+                    return (object) [
+                        'id' => $hasil->id,
+                        'tipe' => 'tryout',
+                        'nama_paket' => $namaJudul,
+                        'nilai' => (float) ($hasil->nilai_akhir ?? 0),
+                        'kategori' => $hasil->status_kelulusan ?? 'Selesai',
+                        'total_soal' => 3, // 3 subtes terpadu
+                        'jumlah_dijawab' => 3,
+                        'tanggal' => $hasil->updated_at,
+                        'url' => route('murid.tryout.hasil', $hasil->id),
+                        'icon' => 'bi-award-fill',
+                        'warna' => 'tryout',
+                        'asli' => $hasil,
+                    ];
+                });
+        }
 
 
         /*
@@ -1720,23 +1302,16 @@ class MuridController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $semuaHasil =
-            $hasilKecermatan
-                ->concat(
-                    $hasilKepribadian
-                )
-                ->concat(
-                    $hasilKecerdasan
-                )
-                ->sortByDesc(
-                    function ($hasil) {
-
-                        return $hasil->tanggal
-                            ? $hasil->tanggal->timestamp
-                            : 0;
-                    }
-                )
-                ->values();
+        $semuaHasil = $hasilKecermatan
+            ->concat($hasilKepribadian)
+            ->concat($hasilKecerdasan)
+            ->concat($hasilTryout)
+            ->sortByDesc(function ($hasil) {
+                return $hasil->tanggal
+                    ? $hasil->tanggal->timestamp
+                    : 0;
+            })
+            ->values();
 
 
         /*
@@ -1745,47 +1320,16 @@ class MuridController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (
-            $request->filled('search')
-        ) {
+        if ($request->filled('search')) {
+            $search = strtolower(trim($request->search));
 
-            $search =
-                strtolower(
-                    trim(
-                        $request->search
-                    )
-                );
-
-            $semuaHasil =
-                $semuaHasil
-                    ->filter(
-                        function ($hasil) use (
-                            $search
-                        ) {
-
-                            return str_contains(
-                                strtolower(
-                                    $hasil->nama_paket
-                                ),
-                                $search
-                            )
-                            ||
-                            str_contains(
-                                strtolower(
-                                    $hasil->tipe
-                                ),
-                                $search
-                            )
-                            ||
-                            str_contains(
-                                strtolower(
-                                    $hasil->kategori
-                                ),
-                                $search
-                            );
-                        }
-                    )
-                    ->values();
+            $semuaHasil = $semuaHasil
+                ->filter(function ($hasil) use ($search) {
+                    return str_contains(strtolower($hasil->nama_paket), $search)
+                        || str_contains(strtolower($hasil->tipe), $search)
+                        || str_contains(strtolower($hasil->kategori), $search);
+                })
+                ->values();
         }
 
 
@@ -1795,30 +1339,14 @@ class MuridController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (
-            $request->filled('kategori')
-        ) {
+        if ($request->filled('kategori')) {
+            $kategori = strtolower(trim($request->kategori));
 
-            $kategori =
-                strtolower(
-                    trim(
-                        $request->kategori
-                    )
-                );
-
-            $semuaHasil =
-                $semuaHasil
-                    ->filter(
-                        function ($hasil) use (
-                            $kategori
-                        ) {
-
-                            return strtolower(
-                                $hasil->kategori
-                            ) === $kategori;
-                        }
-                    )
-                    ->values();
+            $semuaHasil = $semuaHasil
+                ->filter(function ($hasil) use ($kategori) {
+                    return strtolower($hasil->kategori) === $kategori;
+                })
+                ->values();
         }
 
 
@@ -1828,125 +1356,46 @@ class MuridController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $totalUjian =
-            $semuaHasil->count();
+        $totalUjian = $semuaHasil->count();
+        $rataRata = $totalUjian > 0 ? $semuaHasil->avg('nilai') : 0;
+        $nilaiTertinggi = $totalUjian > 0 ? $semuaHasil->max('nilai') : 0;
+        $ujianTerakhir = $semuaHasil->first();
 
+        $kategoriList = $semuaHasil
+            ->pluck('kategori')
+            ->filter()
+            ->unique()
+            ->values();
 
-        $rataRata =
-            $totalUjian > 0
-                ? $semuaHasil->avg(
-                    'nilai'
-                )
-                : 0;
+        $grafikHasil = $semuaHasil
+            ->sortBy(function ($hasil) {
+                return $hasil->tanggal
+                    ? $hasil->tanggal->timestamp
+                    : 0;
+            })
+            ->values()
+            ->map(function ($hasil) {
+                return [
+                    'tanggal' => $hasil->tanggal ? $hasil->tanggal->format('d M') : '-',
+                    'nilai' => (float) $hasil->nilai,
+                    'tipe' => $hasil->tipe,
+                    'nama' => $hasil->nama_paket,
+                ];
+            })
+            ->values();
 
-
-        $nilaiTertinggi =
-            $totalUjian > 0
-                ? $semuaHasil->max(
-                    'nilai'
-                )
-                : 0;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | UJIAN TERAKHIR
-        |--------------------------------------------------------------------------
-        */
-
-        $ujianTerakhir =
-            $semuaHasil->first();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | LIST KATEGORI
-        |--------------------------------------------------------------------------
-        */
-
-        $kategoriList =
-            $semuaHasil
-                ->pluck('kategori')
-                ->filter()
-                ->unique()
-                ->values();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | DATA GRAFIK
-        |--------------------------------------------------------------------------
-        */
-
-        $grafikHasil =
-            $semuaHasil
-                ->sortBy(
-                    function ($hasil) {
-
-                        return $hasil->tanggal
-                            ? $hasil->tanggal->timestamp
-                            : 0;
-                    }
-                )
-                ->values()
-                ->map(
-                    function ($hasil) {
-
-                        return [
-
-                            'tanggal' =>
-                                $hasil->tanggal
-                                    ? $hasil->tanggal
-                                        ->format('d M')
-                                    : '-',
-
-                            'nilai' =>
-                                (float) $hasil->nilai,
-
-                            'tipe' =>
-                                $hasil->tipe,
-
-                            'nama' =>
-                                $hasil->nama_paket,
-                        ];
-                    }
-                )
-                ->values();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | KIRIM KE VIEW
-        |--------------------------------------------------------------------------
-        */
 
         return view(
             'murid.hasil-index',
             [
-
-                'hasilUjians' =>
-                    $semuaHasil,
-
-                'semuaHasil' =>
-                    $semuaHasil,
-
-                'totalUjian' =>
-                    $totalUjian,
-
-                'rataRata' =>
-                    $rataRata,
-
-                'nilaiTertinggi' =>
-                    $nilaiTertinggi,
-
-                'ujianTerakhir' =>
-                    $ujianTerakhir,
-
-                'kategoriList' =>
-                    $kategoriList,
-
-                'grafikHasil' =>
-                    $grafikHasil,
+                'hasilUjians' => $semuaHasil,
+                'semuaHasil' => $semuaHasil,
+                'totalUjian' => $totalUjian,
+                'rataRata' => $rataRata,
+                'nilaiTertinggi' => $nilaiTertinggi,
+                'ujianTerakhir' => $ujianTerakhir,
+                'kategoriList' => $kategoriList,
+                'grafikHasil' => $grafikHasil,
             ]
         );
     }
@@ -1999,13 +1448,9 @@ class MuridController extends Controller
 
 
         $grafikLabel = [];
-
         $grafikNilai = [];
-
         $grafikBenar = [];
-
         $grafikSalah = [];
-
         $grafikTidakDijawab = [];
 
         foreach (
@@ -2043,16 +1488,13 @@ class MuridController extends Controller
                 ?? 0
             );
 
-
         $jumlahDijawab =
             $hasil->jumlah_dijawab;
-
 
         $totalDijawab =
             $this->totalDijawabKecermatan(
                 $jumlahDijawab
             );
-
 
         $totalSalah =
             max(
@@ -2061,14 +1503,12 @@ class MuridController extends Controller
                 $totalBenar
             );
 
-
         $totalTidakDijawab =
             max(
                 0,
                 $totalSoal -
                 $totalDijawab
             );
-
 
         return view(
             'murid.hasil',
@@ -2113,7 +1553,6 @@ class MuridController extends Controller
             );
         }
 
-
         if (
             is_numeric(
                 $jumlahDijawab
@@ -2122,7 +1561,6 @@ class MuridController extends Controller
 
             return (int) $jumlahDijawab;
         }
-
 
         if (
             is_string(
@@ -2160,7 +1598,6 @@ class MuridController extends Controller
             }
         }
 
-
         return 0;
     }
 
@@ -2182,9 +1619,7 @@ class MuridController extends Controller
             $soals->count();
 
         $dijawab = 0;
-
         $benar = 0;
-
         $salah = 0;
 
         foreach (
@@ -2253,7 +1688,6 @@ class MuridController extends Controller
                 : 0;
 
         return [
-
             'total_soal' =>
                 $totalSoal,
 
@@ -2288,7 +1722,6 @@ class MuridController extends Controller
         if ($nilai >= 90) {
 
             return [
-
                 'kategori' =>
                     'Sangat Baik',
 
@@ -2297,11 +1730,9 @@ class MuridController extends Controller
             ];
         }
 
-
         if ($nilai >= 80) {
 
             return [
-
                 'kategori' =>
                     'Baik',
 
@@ -2310,11 +1741,9 @@ class MuridController extends Controller
             ];
         }
 
-
         if ($nilai >= 70) {
 
             return [
-
                 'kategori' =>
                     'Cukup',
 
@@ -2323,11 +1752,9 @@ class MuridController extends Controller
             ];
         }
 
-
         if ($nilai >= 60) {
 
             return [
-
                 'kategori' =>
                     'Perlu Latihan',
 
@@ -2336,9 +1763,7 @@ class MuridController extends Controller
             ];
         }
 
-
         return [
-
             'kategori' =>
                 'Perlu Banyak Latihan',
 

@@ -1,2551 +1,482 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Paket Soal - ZAVIER Learning Center</title>
-
-    <!-- Bootstrap -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-    <!-- Bootstrap Icons -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-        rel="stylesheet"
-    >
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #f5f9ff 0%,
-                    #eef5ff 50%,
-                    #f8fbff 100%
-                );
-
-            font-family:
-                "Segoe UI",
-                Arial,
-                sans-serif;
-
-            color: #17386f;
-
-            min-height: 100vh;
-        }
-
-
-        /* =====================================================
-           PAGE
-        ===================================================== */
-
-        .package-page {
-
-            max-width: 1500px;
-
-            margin: 0 auto;
-
-            padding:
-                30px
-                28px
-                50px;
-        }
-
-
-        /* =====================================================
-           HERO
-        ===================================================== */
-
-        .hero {
-
-            position: relative;
-
-            overflow: hidden;
-
-            border-radius: 28px;
-
-            padding:
-                38px
-                42px;
-
-            margin-bottom: 28px;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #0d6efd 0%,
-                    #1769d2 45%,
-                    #0dcaf0 100%
-                );
-
-            box-shadow:
-                0 18px 45px
-                rgba(13, 110, 253, .18);
-        }
-
-
-        .hero::before {
-
-            content: "";
-
-            position: absolute;
-
-            width: 300px;
-            height: 300px;
-
-            border-radius: 50%;
-
-            background:
-                rgba(255,255,255,.07);
-
-            right: -100px;
-            top: -150px;
-        }
-
-
-        .hero::after {
-
-            content: "";
-
-            position: absolute;
-
-            width: 180px;
-            height: 180px;
-
-            border-radius: 50%;
-
-            background:
-                rgba(255,255,255,.06);
-
-            left: -80px;
-            bottom: -100px;
-        }
-
-
-        .hero-content {
-
-            position: relative;
-
-            z-index: 2;
-        }
-
-
-        .hero-badge {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 7px;
-
-            padding:
-                7px
-                13px;
-
-            border-radius: 30px;
-
-            background:
-                rgba(255,255,255,.16);
-
-            border:
-                1px solid
-                rgba(255,255,255,.18);
-
-            font-size: 11px;
-
-            font-weight: 700;
-
-            letter-spacing: .5px;
-
-            margin-bottom: 15px;
-        }
-
-
-        .hero h1 {
-
-            margin: 0;
-
-            font-size: 32px;
-
-            font-weight: 850;
-
-            letter-spacing: -.7px;
-        }
-
-
-        .hero p {
-
-            margin:
-                10px
-                0
-                0;
-
-            max-width: 700px;
-
-            font-size: 14px;
-
-            line-height: 1.7;
-
-            opacity: .92;
-        }
-
-
-        .hero-icon {
-
-            font-size: 105px;
-
-            opacity: .20;
-
-            position: relative;
-
-            z-index: 2;
-        }
-
-
-        /* =====================================================
-           CATEGORY WRAPPER
-        ===================================================== */
-
-        .category-panel {
-
-            background:
-                rgba(255,255,255,.86);
-
-            border:
-                1px solid
-                #e2eaf5;
-
-            border-radius: 24px;
-
-            padding: 10px;
-
-            box-shadow:
-                0 12px 35px
-                rgba(35,76,130,.06);
-
-            margin-bottom: 28px;
-        }
-
-
-        .category-tabs {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, 1fr);
-
-            gap: 8px;
-        }
-
-
-        .category-btn {
-
-            border: none;
-
-            background: transparent;
-
-            border-radius: 18px;
-
-            padding:
-                15px
-                16px;
-
-            color: #7183a0;
-
-            cursor: pointer;
-
-            transition: .25s ease;
-
-            text-align: left;
-
-            position: relative;
-        }
-
-
-        .category-btn:hover {
-
-            background: #f1f6ff;
-
-            color: #1769aa;
-
-            transform:
-                translateY(-2px);
-        }
-
-
-        .category-btn.active {
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #eaf3ff,
-                    #f4fbff
-                );
-
-            color: #0d6efd;
-
-            box-shadow:
-                0 7px 20px
-                rgba(13,110,253,.08);
-        }
-
-
-        .category-btn.active::after {
-
-            content: "";
-
-            position: absolute;
-
-            height: 3px;
-
-            left: 20px;
-            right: 20px;
-
-            bottom: 5px;
-
-            border-radius: 10px;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #0d6efd,
-                    #0dcaf0
-                );
-        }
-
-
-        .category-inner {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-        }
-
-
-        .category-icon {
-
-            width: 48px;
-            height: 48px;
-
-            border-radius: 15px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 21px;
-
-            flex-shrink: 0;
-
-            background: #eef5ff;
-
-            color: #1769aa;
-
-            transition: .25s ease;
-        }
-
-
-        .category-btn.active
-        .category-icon {
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #0d6efd,
-                    #0dcaf0
-                );
-
-            color: white;
-
-            box-shadow:
-                0 6px 15px
-                rgba(13,110,253,.18);
-        }
-
-
-        .category-name {
-
-            font-size: 14px;
-
-            font-weight: 800;
-
-            display: block;
-        }
-
-
-        .category-count {
-
-            font-size: 11px;
-
-            color: #91a1ba;
-
-            display: block;
-
-            margin-top: 3px;
-        }
-
-
-        /* =====================================================
-           SECTION HEADER
-        ===================================================== */
-
-        .section-header {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 20px;
-
-            margin-bottom: 20px;
-        }
-
-
-        .section-title {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-        }
-
-
-        .section-title-icon {
-
-            width: 48px;
-            height: 48px;
-
-            border-radius: 15px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #e8f2ff,
-                    #effaff
-                );
-
-            color: #0d6efd;
-
-            font-size: 21px;
-        }
-
-
-        .section-title h2 {
-
-            margin: 0;
-
-            font-size: 21px;
-
-            font-weight: 850;
-
-            color: #17386f;
-        }
-
-
-        .section-title p {
-
-            margin:
-                4px
-                0
-                0;
-
-            color: #8b9bb5;
-
-            font-size: 12px;
-        }
-
-
-        .package-total {
-
-            padding:
-                9px
-                14px;
-
-            border-radius: 13px;
-
-            background: #edf4ff;
-
-            color: #1763e8;
-
-            font-size: 12px;
-
-            font-weight: 800;
-
-            white-space: nowrap;
-        }
-
-
-        /* =====================================================
-           SEARCH
-        ===================================================== */
-
-        .search-box {
-
-            position: relative;
-
-            width: 280px;
-        }
-
-
-        .search-box i {
-
-            position: absolute;
-
-            left: 15px;
-
-            top: 50%;
-
-            transform:
-                translateY(-50%);
-
-            color: #8da0bd;
-        }
-
-
-        .search-box input {
-
-            width: 100%;
-
-            border:
-                1px solid
-                #dfe8f4;
-
-            border-radius: 14px;
-
-            padding:
-                11px
-                15px
-                11px
-                42px;
-
-            background: white;
-
-            color: #17386f;
-
-            outline: none;
-
-            transition: .2s ease;
-        }
-
-
-        .search-box input:focus {
-
-            border-color: #8bb9ff;
-
-            box-shadow:
-                0 0 0 4px
-                rgba(13,110,253,.07);
-        }
-
-
-        /* =====================================================
-           PACKAGE GRID
-        ===================================================== */
-
-        .package-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, minmax(0, 1fr));
-
-            gap: 22px;
-        }
-
-
-        /* =====================================================
-           PACKAGE CARD
-        ===================================================== */
-
-        .package-card {
-
-            position: relative;
-
-            background: white;
-
-            border:
-                1px solid
-                #e4ebf6;
-
-            border-radius: 23px;
-
-            overflow: hidden;
-
-            display: flex;
-
-            flex-direction: column;
-
-            min-height: 370px;
-
-            box-shadow:
-                0 10px 32px
-                rgba(35,76,130,.065);
-
-            transition:
-                transform .25s ease,
-                box-shadow .25s ease,
-                border-color .25s ease;
-        }
-
-
-        .package-card:hover {
-
-            transform:
-                translateY(-7px);
-
-            border-color:
-                #c9ddf8;
-
-            box-shadow:
-                0 20px 42px
-                rgba(35,76,130,.12);
-        }
-
-
-        /* =====================================================
-           CARD TOP
-        ===================================================== */
-
-        .package-top {
-
-            position: relative;
-
-            padding:
-                25px
-                25px
-                21px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #f5f9ff,
-                    #ffffff
-                );
-
-            border-bottom:
-                1px solid
-                #edf2f8;
-        }
-
-
-        .package-top::before {
-
-            content: "";
-
-            position: absolute;
-
-            width: 100px;
-            height: 100px;
-
-            border-radius: 50%;
-
-            background:
-                rgba(13,110,253,.045);
-
-            right: -35px;
-            top: -40px;
-        }
-
-
-        .package-icon {
-
-            width: 58px;
-            height: 58px;
-
-            border-radius: 17px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #0d6efd,
-                    #0dcaf0
-                );
-
-            color: white;
-
-            font-size: 24px;
-
-            margin-bottom: 18px;
-
-            box-shadow:
-                0 8px 18px
-                rgba(13,110,253,.18);
-
-            position: relative;
-        }
-
-
-        .package-title-row {
-
-            display: flex;
-
-            align-items: flex-start;
-
-            justify-content: space-between;
-
-            gap: 10px;
-        }
-
-
-        .package-title {
-
-            color: #17386f;
-
-            font-size: 18px;
-
-            font-weight: 850;
-
-            line-height: 1.35;
-
-            margin: 0;
-
-            word-break: break-word;
-        }
-
-
-        .level {
-
-            flex-shrink: 0;
-
-            display: inline-flex;
-
-            align-items: center;
-
-            padding:
-                6px
-                10px;
-
-            border-radius: 20px;
-
-            background: #eaf3ff;
-
-            color: #1763e8;
-
-            font-size: 10px;
-
-            font-weight: 800;
-
-            white-space: nowrap;
-        }
-
-
-        .package-description {
-
-            color: #8393ac;
-
-            font-size: 12px;
-
-            line-height: 1.65;
-
-            margin:
-                12px
-                0
-                0;
-
-            min-height: 40px;
-        }
-
-
-        /* =====================================================
-           CARD BODY
-        ===================================================== */
-
-        .package-body {
-
-            padding:
-                21px
-                25px
-                24px;
-
-            display: flex;
-
-            flex-direction: column;
-
-            flex: 1;
-        }
-
-
-        .test-badge {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-            width: fit-content;
-
-            padding:
-                7px
-                10px;
-
-            border-radius: 10px;
-
-            background: #f0f7ff;
-
-            color: #1769aa;
-
-            font-size: 10px;
-
-            font-weight: 800;
-
-            margin-bottom: 16px;
-        }
-
-
-        .info-list {
-
-            display: flex;
-
-            flex-direction: column;
-
-            gap: 11px;
-
-            margin-bottom: 18px;
-        }
-
-
-        .info-item {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-            color: #7183a0;
-
-            font-size: 12px;
-        }
-
-
-        .info-item i {
-
-            width: 29px;
-            height: 29px;
-
-            border-radius: 9px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background: #f0f6ff;
-
-            color: #2876ed;
-
-            font-size: 13px;
-        }
-
-
-        .info-item strong {
-
-            color: #405779;
-
-            font-weight: 750;
-        }
-
-
-        .package-divider {
-
-            height: 1px;
-
-            background: #edf1f7;
-
-            margin-bottom: 18px;
-        }
-
-
-        /* =====================================================
-           START BUTTON
-        ===================================================== */
-
-        .btn-start {
-
-            width: 100%;
-
-            border: none;
-
-            border-radius: 13px;
-
-            padding:
-                12px
-                15px;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #0d6efd,
-                    #087ee8
-                );
-
-            font-size: 13px;
-
-            font-weight: 800;
-
-            box-shadow:
-                0 7px 17px
-                rgba(13,110,253,.14);
-
-            transition: .2s ease;
-
-            margin-top: auto;
-
-            text-decoration: none;
-
-            display: block;
-
-            text-align: center;
-        }
-
-
-        .btn-start:hover {
-
-            color: white;
-
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                0 10px 23px
-                rgba(13,110,253,.22);
-        }
-
-
-        .btn-start i {
-
-            font-size: 17px;
-
-            vertical-align: -1px;
-        }
-
-
-        /* =====================================================
-           EMPTY
-        ===================================================== */
-
-        .empty-box {
-
-            background: white;
-
-            border:
-                1px solid
-                #e3ebf6;
-
-            border-radius: 24px;
-
-            padding:
-                65px
-                25px;
-
-            text-align: center;
-
-            box-shadow:
-                0 10px 30px
-                rgba(35,76,130,.06);
-        }
-
-
-        .empty-icon {
-
-            width: 80px;
-            height: 80px;
-
-            margin:
-                0
-                auto
-                18px;
-
-            border-radius: 24px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background: #eef5ff;
-
-            color: #8aa2c2;
-
-            font-size: 35px;
-        }
-
-
-        .empty-box h4 {
-
-            color: #36547f;
-
-            font-weight: 800;
-        }
-
-
-        .empty-box p {
-
-            color: #91a1b9;
-
-            font-size: 13px;
-        }
-
-
-        /* =====================================================
-           SEARCH EMPTY
-        ===================================================== */
-
-        .search-empty {
-
-            display: none;
-
-            text-align: center;
-
-            background: white;
-
-            border-radius: 22px;
-
-            padding:
-                50px
-                20px;
-
-            border:
-                1px solid
-                #e4ebf6;
-        }
-
-
-        .search-empty i {
-
-            font-size: 42px;
-
-            color: #9aacc4;
-
-            display: block;
-
-            margin-bottom: 12px;
-        }
-
-
-        .search-empty strong {
-
-            display: block;
-
-            color: #486286;
-
-            margin-bottom: 5px;
-        }
-
-
-        .search-empty span {
-
-            color: #91a1b9;
-
-            font-size: 12px;
-        }
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        .page-footer {
-
-            text-align: center;
-
-            padding:
-                35px
-                0
-                10px;
-
-            color: #9aaac0;
-
-            font-size: 12px;
-        }
-
-
-        /* =====================================================
-           TABLET
-        ===================================================== */
-
-        @media (max-width: 1100px) {
-
-            .package-grid {
-
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
-            }
-
-
-            .category-tabs {
-
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
-
-        }
-
-
-        /* =====================================================
-           MOBILE
-        ===================================================== */
-
-        @media (max-width: 767px) {
-
-            .package-page {
-
-                padding:
-                    20px
-                    15px
-                    35px;
-            }
-
-
-            .hero {
-
-                padding:
-                    27px
-                    23px;
-
-                border-radius: 22px;
-            }
-
-
-            .hero h1 {
-
-                font-size: 25px;
-            }
-
-
-            .hero p {
-
-                font-size: 12px;
-            }
-
-
-            .hero-icon {
-
-                display: none;
-            }
-
-
-            .category-panel {
-
-                border-radius: 20px;
-
-                padding: 7px;
-            }
-
-
-            .category-tabs {
-
-                grid-template-columns:
-                    1fr 1fr;
-            }
-
-
-            .category-btn {
-
-                padding:
-                    12px
-                    10px;
-            }
-
-
-            .category-inner {
-
-                gap: 8px;
-            }
-
-
-            .category-icon {
-
-                width: 40px;
-                height: 40px;
-
-                border-radius: 12px;
-
-                font-size: 17px;
-            }
-
-
-            .category-name {
-
-                font-size: 11px;
-            }
-
-
-            .category-count {
-
-                font-size: 9px;
-            }
-
-
-            .section-header {
-
-                align-items: stretch;
-
-                flex-direction: column;
-
-                margin-bottom: 18px;
-            }
-
-
-            .search-box {
-
-                width: 100%;
-            }
-
-
-            .package-grid {
-
-                grid-template-columns: 1fr;
-
-                gap: 17px;
-            }
-
-
-            .package-card {
-
-                min-height: auto;
-            }
-
-        }
-
-
-        /* =====================================================
-           SMALL MOBILE
-        ===================================================== */
-
-        @media (max-width: 450px) {
-
-            .category-tabs {
-
-                grid-template-columns:
-                    1fr;
-            }
-
-
-            .category-btn.active::after {
-
-                left: 15px;
-
-                right: 15px;
-            }
-
-
-            .package-top {
-
-                padding:
-                    22px
-                    20px
-                    19px;
-            }
-
-
-            .package-body {
-
-                padding:
-                    19px
-                    20px
-                    21px;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<!-- =========================================================
-     NAVBAR
-========================================================= -->
-
-@include('layouts.navbar-murid')
-
-
-<!-- =========================================================
-     PHP KATEGORI
-========================================================= -->
-
-@php
-
-    /*
-    |--------------------------------------------------------------------------
-    | KATEGORI KECERMATAN
-    |--------------------------------------------------------------------------
-    */
-
-    $kategoriKecermatan = $pakets->filter(function ($paket) {
-
-        $jenis = strtolower(
-            trim($paket->jenis_tes ?? '')
-        );
-
-        return
-            str_contains($jenis, 'cermat') ||
-            str_contains($jenis, 'ketelitian');
-
-    });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | KATEGORI KEPRIBADIAN
-    |--------------------------------------------------------------------------
-    */
-
-    $kategoriKepribadian = $pakets->filter(function ($paket) {
-
-        $jenis = strtolower(
-            trim($paket->jenis_tes ?? '')
-        );
-
-        return
-            str_contains($jenis, 'kepribadian') ||
-            str_contains($jenis, 'personality') ||
-            str_contains($jenis, 'karakter') ||
-            str_contains($jenis, 'sikap');
-
-    });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | KATEGORI KECERDASAN
-    |--------------------------------------------------------------------------
-    */
-
-    $kategoriKecerdasan = $pakets->filter(function ($paket) {
-
-        $jenis = strtolower(
-            trim($paket->jenis_tes ?? '')
-        );
-
-        return
-            str_contains($jenis, 'cerdas') ||
-            str_contains($jenis, 'kecerdasan') ||
-            str_contains($jenis, 'logika') ||
-            str_contains($jenis, 'numerik') ||
-            str_contains($jenis, 'verbal') ||
-            str_contains($jenis, 'penalaran');
-
-    });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | GABUNGKAN PAKET
-    |--------------------------------------------------------------------------
-    */
-
-    $paketTerklasifikasi =
-        $kategoriKecermatan
-            ->merge($kategoriKepribadian)
-            ->merge($kategoriKecerdasan)
-            ->unique('id');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | KATEGORI LAINNYA
-    |--------------------------------------------------------------------------
-    */
-
-    $kategoriLainnya =
-        $pakets->filter(function ($paket) use ($paketTerklasifikasi) {
-
-            return !$paketTerklasifikasi
-                ->contains('id', $paket->id);
-
-        });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PAKET TERURUT
-    |--------------------------------------------------------------------------
-    */
-
-    $paketsTerurut =
-        $kategoriKecermatan
-            ->merge($kategoriKepribadian)
-            ->merge($kategoriKecerdasan)
-            ->merge($kategoriLainnya)
-            ->unique('id')
-            ->values();
-
-@endphp
-
-
-<!-- =========================================================
-     MAIN
-========================================================= -->
-
-<main class="package-page">
-
-
-    <!-- =====================================================
-         HERO
-    ====================================================== -->
-
-    <section class="hero">
-
-        <div class="hero-content">
-
-            <div class="row align-items-center">
-
-                <div class="col-lg-8">
-
-                    <div class="hero-badge">
-
-                        <i class="bi bi-mortarboard-fill"></i>
-
-                        ZAVIER LEARNING CENTER
-
-                    </div>
-
-
-                    <h1>
-
-                        Paket Soal Ujian
-
-                    </h1>
-
-
-                    <p>
-
-                        Pilih kategori latihan yang ingin kamu kerjakan.
-                        Tingkatkan kemampuan melalui latihan
-                        kecermatan, kecerdasan, kepribadian,
-                        dan materi lainnya.
-
-                    </p>
-
-                </div>
-
-
-                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-
-                    <i class="bi bi-journal-richtext hero-icon"></i>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         KATEGORI
-    ====================================================== -->
-
-    <section class="category-panel">
-
-        <div class="category-tabs">
-
-
-            <!-- KECERMATAN -->
-
-            <button
-                type="button"
-                class="category-btn active"
-                data-category="kecermatan"
-            >
-
-                <div class="category-inner">
-
-                    <div class="category-icon">
-
+@extends('layouts.murid')
+
+@section('title', 'Paket Soal Ujian - ZAVIER Learning Center')
+
+@section('content')
+<style>
+    .banner-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #0099ff 55%, #00d2ff 100%);
+        border-radius: 24px;
+        padding: 40px;
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .banner-hero::after {
+        content: "";
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        width: 140px;
+        height: 140px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' opacity='0.15' viewBox='0 0 16 16'%3E%3Cpath d='M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.492-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.319-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z'/%3E%3C/svg%3E") no-repeat center center;
+        background-size: contain;
+    }
+
+    /* Container 4 Tab Kategori */
+    .tab-kategori-card {
+        background: #ffffff;
+        border: 2px solid #eef2f8;
+        border-radius: 18px;
+        padding: 18px;
+        cursor: pointer;
+        transition: all .25s ease;
+        position: relative;
+    }
+
+    .tab-kategori-card:hover {
+        border-color: #bfdbfe;
+        transform: translateY(-2px);
+    }
+
+    .tab-kategori-card.active-tab {
+        border-color: #2563eb;
+        background: #ffffff;
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08);
+    }
+
+    .tab-kategori-card.active-tab::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 12px;
+        right: 12px;
+        height: 4px;
+        background: #0084ff;
+        border-radius: 10px 10px 0 0;
+    }
+
+    /* Card Paket Soal */
+    .exam-card {
+        background: #ffffff;
+        border: 1px solid #eef2f8;
+        border-radius: 22px;
+        box-shadow: 0 4px 18px rgba(19, 42, 74, 0.04);
+        padding: 26px;
+        transition: transform .2s ease, box-shadow .2s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .exam-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 26px rgba(19, 42, 74, 0.08);
+    }
+
+    .icon-box-header {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+
+    .icon-tab {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    .badge-diff {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="container-fluid py-2">
+
+    <!-- Hero Banner -->
+    <div class="banner-hero">
+        <span class="badge bg-white text-primary fw-bold px-3 py-2 rounded-pill mb-3" style="font-size: 11px;">
+            <i class="bi bi-mortarboard-fill me-1"></i> ZAVIER LEARNING CENTER
+        </span>
+        <h2 class="fw-bold mb-2">Paket Soal Ujian</h2>
+        <p class="mb-0 text-white-50" style="max-width: 650px;">
+            Pilih kategori latihan yang ingin kamu kerjakan. Tingkatkan kemampuan melalui latihan kecermatan, kecerdasan, kepribadian, dan materi lainnya.
+        </p>
+    </div>
+
+    <!-- Pilihan 4 Kategori Tab (Posisi Tryout di Tab ke-4 / Samping Kecerdasan) -->
+    <div class="row g-3 mb-4">
+
+        <!-- 1. KECERMATAN -->
+        <div class="col-lg-3 col-6">
+            <div class="tab-kategori-card {{ request('tab', 'kecermatan') == 'kecermatan' ? 'active-tab' : '' }}" onclick="switchTab('kecermatan')" id="tab-btn-kecermatan">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-tab bg-primary-subtle text-primary">
                         <i class="bi bi-bullseye"></i>
-
                     </div>
-
-
                     <div>
-
-                        <span class="category-name">
-
-                            Kecermatan
-
-                        </span>
-
-
-                        <span class="category-count">
-
-                            {{ $kategoriKecermatan->count() }}
-                            paket
-
-                        </span>
-
+                        <div class="fw-bold text-dark">Kecermatan</div>
+                        <small class="text-muted">{{ isset($paketsKecermatan) ? $paketsKecermatan->count() : 0 }} paket</small>
                     </div>
-
                 </div>
-
-            </button>
-
-
-            <!-- KEPRIBADIAN -->
-
-            <button
-                type="button"
-                class="category-btn"
-                data-category="kepribadian"
-            >
-
-                <div class="category-inner">
-
-                    <div class="category-icon">
-
-                        <i class="bi bi-person-badge-fill"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <span class="category-name">
-
-                            Kepribadian
-
-                        </span>
-
-
-                        <span class="category-count">
-
-                            {{ $kategoriKepribadian->count() }}
-                            paket
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </button>
-
-
-            <!-- KECERDASAN -->
-
-            <button
-                type="button"
-                class="category-btn"
-                data-category="kecerdasan"
-            >
-
-                <div class="category-inner">
-
-                    <div class="category-icon">
-
-                        <i class="bi bi-lightbulb-fill"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <span class="category-name">
-
-                            Kecerdasan
-
-                        </span>
-
-
-                        <span class="category-count">
-
-                            {{ $kategoriKecerdasan->count() }}
-                            paket
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </button>
-
-
-            <!-- LAINNYA -->
-
-            <button
-                type="button"
-                class="category-btn"
-                data-category="lainnya"
-            >
-
-                <div class="category-inner">
-
-                    <div class="category-icon">
-
-                        <i class="bi bi-grid-fill"></i>
-
-                    </div>
-
-
-                    <div>
-
-                        <span class="category-name">
-
-                            Lainnya
-
-                        </span>
-
-
-                        <span class="category-count">
-
-                            {{ $kategoriLainnya->count() }}
-                            paket
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </button>
-
-
+            </div>
         </div>
 
-    </section>
-
-
-    <!-- =====================================================
-         SECTION HEADER
-    ====================================================== -->
-
-    <div class="section-header">
-
-        <div class="section-title">
-
-            <div class="section-title-icon">
-
-                <i
-                    class="bi bi-bullseye"
-                    id="categoryTitleIcon"
-                ></i>
-
+        <!-- 2. KEPRIBADIAN -->
+        <div class="col-lg-3 col-6">
+            <div class="tab-kategori-card {{ request('tab') == 'kepribadian' ? 'active-tab' : '' }}" onclick="switchTab('kepribadian')" id="tab-btn-kepribadian">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-tab bg-light text-secondary">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-dark">Kepribadian</div>
+                        <small class="text-muted">{{ isset($paketsKepribadian) ? $paketsKepribadian->count() : 0 }} paket</small>
+                    </div>
+                </div>
             </div>
-
-
-            <div>
-
-                <h2 id="categoryTitle">
-
-                    Kecermatan
-
-                </h2>
-
-
-                <p id="categoryDescription">
-
-                    Latihan untuk meningkatkan kecepatan
-                    dan ketelitian dalam mengerjakan soal.
-
-                </p>
-
-            </div>
-
         </div>
 
-
-        <div class="d-flex align-items-center gap-3">
-
-            <div class="package-total">
-
-                <i class="bi bi-collection-fill me-1"></i>
-
-                <span id="visibleCount">
-
-                    {{ $kategoriKecermatan->count() }}
-
-                </span>
-
-                Paket
-
+        <!-- 3. KECERDASAN -->
+        <div class="col-lg-3 col-6">
+            <div class="tab-kategori-card {{ request('tab') == 'kecerdasan' ? 'active-tab' : '' }}" onclick="switchTab('kecerdasan')" id="tab-btn-kecerdasan">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-tab bg-light text-secondary">
+                        <i class="bi bi-lightbulb"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-dark">Kecerdasan</div>
+                        <small class="text-muted">{{ isset($paketsKecerdasan) ? $paketsKecerdasan->count() : 0 }} paket</small>
+                    </div>
+                </div>
             </div>
+        </div>
 
-
-            <div class="search-box">
-
-                <i class="bi bi-search"></i>
-
-                <input
-                    type="text"
-                    id="searchPackage"
-                    placeholder="Cari paket soal..."
-                    autocomplete="off"
-                >
-
+        <!-- 4. TRYOUT PSIKOLOGI (DI SAMPING KECERDASAN) -->
+        <div class="col-lg-3 col-6">
+            <div class="tab-kategori-card {{ request('tab') == 'tryout' ? 'active-tab' : '' }}" onclick="switchTab('tryout')" id="tab-btn-tryout">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-tab bg-warning-subtle text-warning">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-dark">Tryout Psikologi</div>
+                        <small class="text-muted">{{ isset($paketTryout) ? $paketTryout->count() : 0 }} paket</small>
+                    </div>
+                </div>
             </div>
-
         </div>
 
     </div>
 
-
-    <!-- =====================================================
-         PACKAGE GRID
-    ====================================================== -->
-
-    @if($paketsTerurut->count() > 0)
-
-        <div
-            class="package-grid"
-            id="packageGrid"
-        >
-
-
-            @foreach($paketsTerurut as $paket)
-
-                @php
-
-                    $jenis =
-                        strtolower(
-                            trim(
-                                $paket->jenis_tes ?? ''
-                            )
-                        );
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | TENTUKAN KATEGORI CARD
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (
-                        str_contains($jenis, 'cermat') ||
-                        str_contains($jenis, 'ketelitian')
-                    ) {
-
-                        $kategori = 'kecermatan';
-
-                        $kategoriLabel =
-                            'Kecermatan';
-
-                        $kategoriIcon =
-                            'bi-bullseye';
-
-
-                    } elseif (
-                        str_contains($jenis, 'kepribadian') ||
-                        str_contains($jenis, 'personality') ||
-                        str_contains($jenis, 'karakter') ||
-                        str_contains($jenis, 'sikap')
-                    ) {
-
-                        $kategori = 'kepribadian';
-
-                        $kategoriLabel =
-                            'Kepribadian';
-
-                        $kategoriIcon =
-                            'bi-person-badge-fill';
-
-
-                    } elseif (
-                        str_contains($jenis, 'cerdas') ||
-                        str_contains($jenis, 'kecerdasan') ||
-                        str_contains($jenis, 'logika') ||
-                        str_contains($jenis, 'numerik') ||
-                        str_contains($jenis, 'verbal') ||
-                        str_contains($jenis, 'penalaran')
-                    ) {
-
-                        $kategori = 'kecerdasan';
-
-                        $kategoriLabel =
-                            'Kecerdasan';
-
-                        $kategoriIcon =
-                            'bi-lightbulb-fill';
-
-
-                    } else {
-
-                        $kategori = 'lainnya';
-
-                        $kategoriLabel =
-                            'Lainnya';
-
-                        $kategoriIcon =
-                            'bi-grid-fill';
-
-                    }
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ICON CARD
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $cardIcon =
-                        $kategori === 'kecermatan'
-                            ? 'bi-bullseye'
-                            : (
-                                $kategori === 'kepribadian'
-                                    ? 'bi-person-badge-fill'
-                                    : (
-                                        $kategori === 'kecerdasan'
-                                            ? 'bi-lightbulb-fill'
-                                            : 'bi-journal-text'
-                                    )
-                            );
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ROUTE MULAI UJIAN (PERBAIKAN KECERDASAN)
-                    |--------------------------------------------------------------------------
-                    |
-                    | KECERMATAN:
-                    | murid.ujian
-                    |
-                    | KEPRIBADIAN:
-                    | murid.kepribadian.mulai
-                    |
-                    | KECERDASAN:
-                    | murid.kecerdasan.mulai
-                    |
-                    */
-
-                    if ($kategori === 'kepribadian') {
-
-                        $routeMulaiUjian = route(
-                            'murid.kepribadian.mulai',
-                            [
-                                'paket' => $paket->getKey()
-                            ]
-                        );
-
-                    } elseif ($kategori === 'kecerdasan') {
-
-                        $routeMulaiUjian = route(
-                            'murid.kecerdasan.mulai',
-                            [
-                                'paket' => $paket->getKey()
-                            ]
-                        );
-
-                    } else {
-
-                        $routeMulaiUjian = route(
-                            'murid.ujian',
-                            [
-                                'paketSoal' => $paket->getKey()
-                            ]
-                        );
-
-                    }
-
-                @endphp
-
-
-                <article
-                    class="package-card"
-                    data-category="{{ $kategori }}"
-                    data-search="{{ strtolower(
-                        ($paket->nama_paket ?? '') .
-                        ' ' .
-                        ($paket->jenis_tes ?? '') .
-                        ' ' .
-                        ($paket->tingkat ?? '') .
-                        ' ' .
-                        ($paket->tipe_soal ?? '')
-                    ) }}"
-                >
-
-
-                    <!-- =================================================
-                         CARD TOP
-                    ================================================== -->
-
-                    <div class="package-top">
-
-
-                        <div class="package-icon">
-
-                            <i class="bi {{ $cardIcon }}"></i>
-
-                        </div>
-
-
-                        <div class="package-title-row">
-
-                            <h3 class="package-title">
-
-                                {{ $paket->nama_paket }}
-
-                            </h3>
-
-
-                            @if($paket->tingkat)
-
-                                <span class="level">
-
-                                    {{ $paket->tingkat }}
-
-                                </span>
-
-                            @endif
-
-                        </div>
-
-
-                        <p class="package-description">
-
-                            {{ $paket->keterangan
-                                ?: 'Paket latihan Zavier Learning Center untuk meningkatkan kemampuan Anda.' }}
-
-                        </p>
-
-
-                    </div>
-
-
-                    <!-- =================================================
-                         CARD BODY
-                    ================================================== -->
-
-                    <div class="package-body">
-
-
-                        <!-- KATEGORI -->
-
-                        <div class="test-badge">
-
-                            <i class="bi {{ $kategoriIcon }}"></i>
-
-                            Tes {{ $kategoriLabel }}
-
-                        </div>
-
-
-                        <!-- INFO -->
-
-                        <div class="info-list">
-
-
-                            <!-- JENIS TES -->
-
-                            <div class="info-item">
-
-                                <i class="bi bi-patch-check-fill"></i>
-
-                                <span>
-
-                                    Jenis:
-
-                                    <strong>
-
-                                        {{ $paket->jenis_tes ?: $kategoriLabel }}
-
-                                    </strong>
-
-                                </span>
-
-                            </div>
-
-
-                            <!-- TIPE SOAL -->
-
-                            @if($paket->tipe_soal)
-
-                                <div class="info-item">
-
-                                    <i class="bi bi-grid-3x3-gap-fill"></i>
-
-                                    <span>
-
-                                        Tipe:
-
-                                        <strong>
-
-                                            {{ $paket->tipe_soal }}
-
-                                        </strong>
-
-                                    </span>
-
-                                </div>
-
-                            @endif
-
-
-                            <!-- JUMLAH SOAL -->
-
-                            <div class="info-item">
-
-                                <i class="bi bi-list-ol"></i>
-
-                                <span>
-
-                                    @if($kategori === 'kecermatan')
-
-                                        <strong>
-
-                                            {{ $paket->jumlah_soal ?? 0 }}
-
-                                        </strong>
-
-                                        soal per kolom
-
-                                    @else
-
-                                        Jumlah soal:
-
-                                        <strong>
-
-                                            {{ $paket->jumlah_soal ?? 0 }}
-
-                                        </strong>
-
-                                    @endif
-
-                                </span>
-
-                            </div>
-
-
-                        </div>
-
-
-                        <div class="package-divider"></div>
-
-
-                        <!-- =================================================
-                             MULAI UJIAN
-                        ================================================== -->
-
-                        <a
-                            href="{{ $routeMulaiUjian }}"
-                            class="btn btn-start"
-                        >
-
-                            <i class="bi bi-play-fill me-1"></i>
-
-                            Mulai Ujian
-
-                            <i
-                                class="bi bi-arrow-right ms-1"
-                            ></i>
-
-                        </a>
-
-
-                    </div>
-
-
-                </article>
-
-
-            @endforeach
-
-
+    <!-- Alert Notifikasi -->
+    @if(session('error'))
+        <div class="alert alert-danger border-0 rounded-4 shadow-sm mb-4">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> {{ session('error') }}
         </div>
-
-
-        <!-- =====================================================
-             SEARCH EMPTY
-        ====================================================== -->
-
-        <div
-            class="search-empty mt-4"
-            id="searchEmpty"
-        >
-
-            <i class="bi bi-search"></i>
-
-
-            <strong>
-
-                Paket soal tidak ditemukan
-
-            </strong>
-
-
-            <span>
-
-                Coba gunakan kata pencarian yang berbeda.
-
-            </span>
-
+    @endif
+    @if(session('success'))
+        <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
         </div>
-
-
-    @else
-
-
-        <!-- =====================================================
-             EMPTY DATABASE
-        ====================================================== -->
-
-        <div class="empty-box">
-
-
-            <div class="empty-icon">
-
-                <i class="bi bi-inbox"></i>
-
-            </div>
-
-
-            <h4>
-
-                Belum Ada Paket Soal
-
-            </h4>
-
-
-            <p>
-
-                Saat ini belum ada paket ujian yang tersedia.
-                Silakan cek kembali nanti.
-
-            </p>
-
-
-            <a
-                href="{{ route('murid.dashboard') }}"
-                class="btn btn-primary rounded-pill px-4"
-            >
-
-                <i class="bi bi-arrow-left me-1"></i>
-
-                Kembali ke Dashboard
-
-            </a>
-
-
-        </div>
-
     @endif
 
 
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
+    <!-- =========================================================
+         KONTEN TAB 1: KECERMATAN
+    ========================================================== -->
+    <div id="content-kecermatan" class="tab-content-panel" style="display: {{ request('tab', 'kecermatan') == 'kecermatan' ? 'block' : 'none' }};">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-2 rounded-circle bg-primary-subtle text-primary fs-5">
+                    <i class="bi bi-bullseye"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">Kecermatan</h5>
+                    <small class="text-muted">Latihan untuk meningkatkan kecepatan dan ketelitian dalam mengerjakan soal.</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-2 fw-semibold">
+                    <i class="bi bi-folder-fill me-1"></i> {{ isset($paketsKecermatan) ? $paketsKecermatan->count() : 0 }} Paket
+                </span>
+                <div class="position-relative" style="width: 250px;">
+                    <input type="text" class="form-control rounded-pill ps-4 py-2 small" placeholder="Cari paket soal..." onkeyup="filterPaket(this.value, 'content-kecermatan')">
+                </div>
+            </div>
+        </div>
 
-    <div class="page-footer">
-
-        ZAVIER Learning Center
-
-        &copy;
-
-        {{ date('Y') }}
-
-        ·
-
-        Platform Latihan Ujian
-
+        <div class="row g-4">
+            @forelse($paketsKecermatan as $p)
+                <div class="col-lg-4 col-md-6 paket-item-card">
+                    <div class="exam-card">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="icon-box-header bg-primary text-white shadow-sm">
+                                    <i class="bi bi-bullseye"></i>
+                                </div>
+                                <span class="badge badge-diff bg-primary-subtle text-primary">Sulit</span>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-2 paket-title">{{ $p->nama_paket }}</h5>
+                            <p class="text-muted small mb-4">Paket latihan kecermatan untuk menguji ketelitian simbol, angka, dan respon visual.</p>
+                        </div>
+                        <a href="{{ route('murid.ujian', $p->id) }}" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">
+                            Mulai Latihan
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="text-center py-5 bg-white rounded-4 border">
+                        <i class="bi bi-folder-x text-muted" style="font-size: 40px;"></i>
+                        <p class="text-muted small mt-2 mb-0">Belum ada paket kecermatan yang tersedia.</p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
     </div>
 
 
-</main>
+    <!-- =========================================================
+         KONTEN TAB 2: KEPRIBADIAN
+    ========================================================== -->
+    <div id="content-kepribadian" class="tab-content-panel" style="display: {{ request('tab') == 'kepribadian' ? 'block' : 'none' }};">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-2 rounded-circle bg-success-subtle text-success fs-5">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">Kepribadian</h5>
+                    <small class="text-muted">Evaluasi aspek psikologis, stabilitas emosi, kepemimpinan, dan integritas diri.</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-success-subtle text-success border rounded-pill px-3 py-2 fw-semibold">
+                    <i class="bi bi-folder-fill me-1"></i> {{ isset($paketsKepribadian) ? $paketsKepribadian->count() : 0 }} Paket
+                </span>
+                <div class="position-relative" style="width: 250px;">
+                    <input type="text" class="form-control rounded-pill ps-4 py-2 small" placeholder="Cari paket soal..." onkeyup="filterPaket(this.value, 'content-kepribadian')">
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @forelse($paketsKepribadian as $pp)
+                @php
+                    $namaBank = $pp->nama_bank ?? $pp->nama_paket ?? $pp->judul ?? ('Paket Kepribadian #' . $pp->id);
+                @endphp
+                <div class="col-lg-4 col-md-6 paket-item-card">
+                    <div class="exam-card">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="icon-box-header bg-success text-white shadow-sm">
+                                    <i class="bi bi-person-heart"></i>
+                                </div>
+                                <span class="badge badge-diff bg-success-subtle text-success">Sikap</span>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-2 paket-title">{{ $namaBank }}</h5>
+                            <p class="text-muted small mb-4">Kuesioner sikap dan integritas. Jawab jujur sesuai prinsip pribadi Anda.</p>
+                        </div>
+                        <a href="{{ route('murid.kepribadian.mulai', $pp->id) }}" class="btn btn-success w-100 rounded-pill py-2 fw-bold text-white">
+                            Mulai Latihan
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="text-center py-5 bg-white rounded-4 border">
+                        <i class="bi bi-folder-x text-muted" style="font-size: 40px;"></i>
+                        <p class="text-muted small mt-2 mb-0">Belum ada paket kepribadian yang tersedia.</p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+    </div>
 
 
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
+    <!-- =========================================================
+         KONTEN TAB 3: KECERDASAN
+    ========================================================== -->
+    <div id="content-kecerdasan" class="tab-content-panel" style="display: {{ request('tab') == 'kecerdasan' ? 'block' : 'none' }};">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-2 rounded-circle bg-primary-subtle text-primary fs-5">
+                    <i class="bi bi-lightbulb-fill"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">Kecerdasan</h5>
+                    <small class="text-muted">Latihan kemampuan berpikir, logika, numerik, verbal, dan penalaran.</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-2 fw-semibold">
+                    <i class="bi bi-folder-fill me-1"></i> {{ isset($paketsKecerdasan) ? $paketsKecerdasan->count() : 0 }} Paket
+                </span>
+                <div class="position-relative" style="width: 250px;">
+                    <input type="text" class="form-control rounded-pill ps-4 py-2 small" placeholder="Cari paket soal..." onkeyup="filterPaket(this.value, 'content-kecerdasan')">
+                </div>
+            </div>
+        </div>
 
+        <div class="row g-4">
+            @forelse($paketsKecerdasan as $pk)
+                <div class="col-lg-4 col-md-6 paket-item-card">
+                    <div class="exam-card">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="icon-box-header bg-primary text-white shadow-sm">
+                                    <i class="bi bi-lightbulb"></i>
+                                </div>
+                                <span class="badge badge-diff bg-primary-subtle text-primary">Sulit</span>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-2 paket-title">{{ $pk->nama_paket }}</h5>
+                            <p class="text-muted small mb-4">Paket latihan ZAVIER Learning Center untuk meningkatkan daya nalar dan intelegensi.</p>
+                        </div>
+                        <a href="{{ route('murid.kecerdasan.mulai', $pk->id) }}" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">
+                            Mulai Latihan
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="text-center py-5 bg-white rounded-4 border">
+                        <i class="bi bi-folder-x text-muted" style="font-size: 40px;"></i>
+                        <p class="text-muted small mt-2 mb-0">Belum ada paket kecerdasan yang tersedia.</p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         KONTEN TAB 4: TRYOUT PSIKOLOGI (TERPADU POLRI)
+    ========================================================== -->
+    <div id="content-tryout" class="tab-content-panel" style="display: {{ request('tab') == 'tryout' ? 'block' : 'none' }};">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-2 rounded-circle bg-warning-subtle text-warning fs-5">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">Tryout Psikologi POLRI (Full CAT)</h5>
+                    <small class="text-muted">Simulasi terpadu berurutan: Kecerdasan &rarr; Jeda 5 Menit &rarr; Kepribadian &rarr; Jeda 5 Menit &rarr; Kecermatan.</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-warning-subtle text-dark border rounded-pill px-3 py-2 fw-semibold">
+                    <i class="bi bi-folder-fill me-1 text-warning"></i> {{ isset($paketTryout) ? $paketTryout->count() : 0 }} Paket
+                </span>
+                <div class="position-relative" style="width: 250px;">
+                    <input type="text" class="form-control rounded-pill ps-4 py-2 small" placeholder="Cari tryout..." onkeyup="filterPaket(this.value, 'content-tryout')">
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @forelse($paketTryout as $t)
+                <div class="col-lg-4 col-md-6 paket-item-card">
+                    <div class="exam-card border-warning-subtle">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="icon-box-header bg-warning text-dark shadow-sm">
+                                    <i class="bi bi-award-fill"></i>
+                                </div>
+                                <span class="badge badge-diff bg-warning-subtle text-dark">Resmi POLRI</span>
+                            </div>
+
+                            <h5 class="fw-bold text-dark mb-2 paket-title">{{ $t->judul_tryout }}</h5>
+                            <p class="text-muted small mb-3">
+                                {{ $t->deskripsi ?: 'Simulasi gabungan 3 subtes psikologi lengkap dengan akumulasi skor akhir dan status kelulusan MS / TMS.' }}
+                            </p>
+
+                            <!-- Rangkaian 3 Subtes -->
+                            <div class="p-3 bg-light rounded-3 mb-4 border">
+                                <div class="small fw-bold text-dark mb-2">Rangkaian Alur Ujian:</div>
+                                <div class="small text-muted mb-1"><i class="bi bi-1-circle-fill text-primary me-1"></i> Kecerdasan: <strong>{{ optional($t->paketKecerdasan)->nama_paket ?? 'Subtes 1' }}</strong></div>
+                                <div class="small text-muted mb-1"><i class="bi bi-2-circle-fill text-success me-1"></i> Kepribadian: <strong>Subtes 2</strong></div>
+                                <div class="small text-muted"><i class="bi bi-3-circle-fill text-info me-1"></i> Kecermatan: <strong>{{ optional($t->paketKecermatan)->nama_paket ?? 'Subtes 3' }}</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Mulai Tryout CAT -->
+                        <a href="{{ route('murid.tryout.mulai', $t->id) }}" class="btn btn-warning w-100 rounded-pill py-2 fw-bold text-dark shadow-sm">
+                            <i class="bi bi-play-circle-fill me-1"></i> Mulai Tryout CAT
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="text-center py-5 bg-white rounded-4 border">
+                        <i class="bi bi-award text-muted" style="font-size: 40px;"></i>
+                        <h6 class="fw-bold text-dark mt-3">Belum Ada Paket Tryout Aktif</h6>
+                        <p class="text-muted small mb-0">Paket tryout psikologi akan segera dirilis oleh Super Admin ZAVIER.</p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+</div>
+
+<!-- JAVASCRIPT GANTI TAB & PENCARIAN -->
 <script>
-
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
-
-
-        const categoryButtons =
-            document.querySelectorAll(
-                '.category-btn'
-            );
-
-
-        const cards =
-            document.querySelectorAll(
-                '.package-card'
-            );
-
-
-        const searchInput =
-            document.getElementById(
-                'searchPackage'
-            );
-
-
-        const visibleCount =
-            document.getElementById(
-                'visibleCount'
-            );
-
-
-        const searchEmpty =
-            document.getElementById(
-                'searchEmpty'
-            );
-
-
-        const categoryTitle =
-            document.getElementById(
-                'categoryTitle'
-            );
-
-
-        const categoryDescription =
-            document.getElementById(
-                'categoryDescription'
-            );
-
-
-        const categoryTitleIcon =
-            document.getElementById(
-                'categoryTitleIcon'
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | INFORMASI KATEGORI
-        |--------------------------------------------------------------------------
-        */
-
-        const categoryInfo = {
-
-            kecermatan: {
-
-                title:
-                    'Kecermatan',
-
-                description:
-                    'Latihan untuk meningkatkan kecepatan dan ketelitian dalam mengerjakan soal.',
-
-                icon:
-                    'bi-bullseye'
-
-            },
-
-
-            kepribadian: {
-
-                title:
-                    'Kepribadian',
-
-                description:
-                    'Latihan untuk mengenali karakter, sikap, dan kecenderungan kepribadian.',
-
-                icon:
-                    'bi-person-badge-fill'
-
-            },
-
-
-            kecerdasan: {
-
-                title:
-                    'Kecerdasan',
-
-                description:
-                    'Latihan kemampuan berpikir, logika, numerik, verbal, dan penalaran.',
-
-                icon:
-                    'bi-lightbulb-fill'
-
-            },
-
-
-            lainnya: {
-
-                title:
-                    'Paket Lainnya',
-
-                description:
-                    'Materi dan latihan lainnya yang tersedia di Zavier Learning Center.',
-
-                icon:
-                    'bi-grid-fill'
-
-            }
-
-        };
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | KATEGORI AWAL
-        |--------------------------------------------------------------------------
-        */
-
-        let activeCategory =
-            'kecermatan';
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | FILTER PAKET
-        |--------------------------------------------------------------------------
-        */
-
-        function filterPackages() {
-
-            const keyword =
-                (
-                    searchInput
-                        ? searchInput.value
-                        : ''
-                )
-                .toLowerCase()
-                .trim();
-
-
-            let count = 0;
-
-
-            cards.forEach(
-                function (card) {
-
-                    const category =
-                        card.dataset.category
-                        || 'lainnya';
-
-
-                    const searchText =
-                        card.dataset.search
-                        || '';
-
-
-                    const categoryMatch =
-                        category ===
-                        activeCategory;
-
-
-                    const searchMatch =
-                        searchText.includes(
-                            keyword
-                        );
-
-
-                    if (
-                        categoryMatch &&
-                        searchMatch
-                    ) {
-
-                        card.style.display =
-                            'flex';
-
-                        count++;
-
-                    } else {
-
-                        card.style.display =
-                            'none';
-
-                    }
-
-                }
-            );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | JUMLAH PAKET
-            |--------------------------------------------------------------------------
-            */
-
-            if (visibleCount) {
-
-                visibleCount.textContent =
-                    count;
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | EMPTY SEARCH
-            |--------------------------------------------------------------------------
-            */
-
-            if (searchEmpty) {
-
-                if (count === 0) {
-
-                    searchEmpty.style.display =
-                        'block';
-
-                } else {
-
-                    searchEmpty.style.display =
-                        'none';
-
-                }
-
-            }
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | KLIK KATEGORI
-        |--------------------------------------------------------------------------
-        */
-
-        categoryButtons.forEach(
-            function (button) {
-
-                button.addEventListener(
-                    'click',
-                    function () {
-
-
-                        categoryButtons.forEach(
-                            function (btn) {
-
-                                btn.classList.remove(
-                                    'active'
-                                );
-
-                            }
-                        );
-
-
-                        this.classList.add(
-                            'active'
-                        );
-
-
-                        activeCategory =
-                            this.dataset.category;
-
-
-                        if (
-                            categoryInfo[
-                                activeCategory
-                            ]
-                        ) {
-
-                            categoryTitle.textContent =
-                                categoryInfo[
-                                    activeCategory
-                                ].title;
-
-
-                            categoryDescription.textContent =
-                                categoryInfo[
-                                    activeCategory
-                                ].description;
-
-
-                            if (categoryTitleIcon) {
-
-                                categoryTitleIcon.className =
-                                    'bi ' +
-                                    categoryInfo[
-                                        activeCategory
-                                    ].icon;
-
-                            }
-
-                        }
-
-
-                        filterPackages();
-
-                    }
-                );
-
-            }
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | SEARCH
-        |--------------------------------------------------------------------------
-        */
-
-        if (searchInput) {
-
-            searchInput.addEventListener(
-                'input',
-                function () {
-
-                    filterPackages();
-
-                }
-            );
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | FILTER AWAL
-        |--------------------------------------------------------------------------
-        */
-
-        filterPackages();
-
+    function switchTab(tabKey) {
+        // Sembunyikan semua panel
+        document.querySelectorAll('.tab-content-panel').forEach(panel => {
+            panel.style.display = 'none';
+        });
+
+        // Hapus class active-tab dari tombol tab
+        document.querySelectorAll('.tab-kategori-card').forEach(card => {
+            card.classList.remove('active-tab');
+        });
+
+        // Tampilkan panel target
+        const targetContent = document.getElementById('content-' + tabKey);
+        const targetBtn = document.getElementById('tab-btn-' + tabKey);
+
+        if (targetContent) targetContent.style.display = 'block';
+        if (targetBtn) targetBtn.classList.add('active-tab');
+
+        // Update URL tanpa reload
+        const url = new URL(window.location);
+        url.searchParams.set('tab', tabKey);
+        window.history.replaceState({}, '', url);
     }
-);
 
+    function filterPaket(keyword, containerId) {
+        keyword = keyword.toLowerCase();
+        const container = document.getElementById(containerId);
+        const cards = container.querySelectorAll('.paket-item-card');
+
+        cards.forEach(card => {
+            const title = card.querySelector('.paket-title').innerText.toLowerCase();
+            if (title.includes(keyword)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
 </script>
-
-
-<!-- =========================================================
-     BOOTSTRAP JS
-========================================================= -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-></script>
-
-
-</body>
-
-</html>
+@endsection
